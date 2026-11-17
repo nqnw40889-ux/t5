@@ -1,0 +1,6 @@
+services:
+  - name: ai4i-nhom16-api
+    type: web
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health

@@ -1,0 +1,1734 @@
+{
+  "winner": {
+    "model": "LightGBM",
+    "profile": 3,
+    "method": "baseline",
+    "columns": [
+      "Type",
+      "Air temperature [K]",
+      "Process temperature [K]",
+      "Rotational speed [rpm]",
+      "Torque [Nm]",
+      "Tool wear [min]"
+    ],
+    "params": {
+      "max_depth": 4,
+      "num_leaves": 12,
+      "n_estimators": 200,
+      "min_child_samples": 20,
+      "reg_lambda": 3
+    },
+    "train_ap": 0.9396282927800802,
+    "cv_ap": 0.763030171093292,
+    "cv_sd": 0.04189397658474731,
+    "gap": 0.17659812168678823,
+    "threshold": 0.31537755439431603,
+    "val": {
+      "threshold": 0.31537755439431603,
+      "ap": 0.8189607503195601,
+      "precision": 0.7843137254901961,
+      "recall": 0.7843137254901961,
+      "f1": 0.7843137254901961,
+      "tn": 1438,
+      "fp": 11,
+      "fn": 11,
+      "tp": 40
+    }
+  },
+  "original": {
+    "model": "LightGBM",
+    "profile": 4,
+    "method": "baseline",
+    "columns": [
+      "Type",
+      "Air temperature [K]",
+      "Process temperature [K]",
+      "Rotational speed [rpm]",
+      "Torque [Nm]",
+      "Tool wear [min]"
+    ],
+    "params": {
+      "max_depth": 5,
+      "num_leaves": 15,
+      "n_estimators": 220,
+      "min_child_samples": 20,
+      "reg_lambda": 2
+    },
+    "train_ap": 0.9767021995620847,
+    "cv_ap": 0.7728088466838114,
+    "cv_sd": 0.03884350310481486,
+    "gap": 0.20389335287827318,
+    "threshold": 0.41233314783700126,
+    "val": {
+      "threshold": 0.41233314783700126,
+      "ap": 0.7993546833717815,
+      "precision": 0.8043478260869565,
+      "recall": 0.7254901960784313,
+      "f1": 0.7628865979381443,
+      "tn": 1440,
+      "fp": 9,
+      "fn": 14,
+      "tp": 37
+    }
+  },
+  "cv_required": 0.7428088466838114,
+  "val_required": 0.78896075031956,
+  "total": 40,
+  "all_configurations": [
+    {
+      "model": "Logistic Regression",
+      "profile": 1,
+      "method": "baseline",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "C": 0.03
+      },
+      "train_ap": 0.45401366908991164,
+      "cv_ap": 0.4317530032079744,
+      "cv_sd": 0.025761972837305136,
+      "gap": 0.02226066588193727,
+      "threshold": 0.15282485885930053,
+      "val": {
+        "threshold": 0.15282485885930053,
+        "ap": 0.3716422376044426,
+        "precision": 0.4666666666666667,
+        "recall": 0.4117647058823529,
+        "f1": 0.4375,
+        "tn": 1425,
+        "fp": 24,
+        "fn": 30,
+        "tp": 21
+      }
+    },
+    {
+      "model": "Logistic Regression",
+      "profile": 1,
+      "method": "class_weight",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "C": 0.03
+      },
+      "train_ap": 0.47284680484297575,
+      "cv_ap": 0.456236732948256,
+      "cv_sd": 0.020905840766045847,
+      "gap": 0.016610071894719747,
+      "threshold": 0.5261643409155143,
+      "val": {
+        "threshold": 0.5261643409155143,
+        "ap": 0.379084587280163,
+        "precision": 0.47619047619047616,
+        "recall": 0.39215686274509803,
+        "f1": 0.43010752688172044,
+        "tn": 1427,
+        "fp": 22,
+        "fn": 31,
+        "tp": 20
+      }
+    },
+    {
+      "model": "Logistic Regression",
+      "profile": 1,
+      "method": "smotenc_25",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "C": 0.03
+      },
+      "train_ap": 0.46608821432787767,
+      "cv_ap": 0.4496135086003326,
+      "cv_sd": 0.026806821609806613,
+      "gap": 0.016474705727545086,
+      "threshold": 0.6531395955628368,
+      "val": {
+        "threshold": 0.6531395955628368,
+        "ap": 0.3692722579328535,
+        "precision": 0.5135135135135135,
+        "recall": 0.37254901960784315,
+        "f1": 0.4318181818181818,
+        "tn": 1431,
+        "fp": 18,
+        "fn": 32,
+        "tp": 19
+      }
+    },
+    {
+      "model": "Logistic Regression",
+      "profile": 2,
+      "method": "baseline",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "C": 0.3
+      },
+      "train_ap": 0.48839383677949016,
+      "cv_ap": 0.4725604569411723,
+      "cv_sd": 0.02993537502130305,
+      "gap": 0.015833379838317813,
+      "threshold": 0.2544101024035122,
+      "val": {
+        "threshold": 0.2544101024035122,
+        "ap": 0.3848850329855801,
+        "precision": 0.5121951219512195,
+        "recall": 0.4117647058823529,
+        "f1": 0.45652173913043476,
+        "tn": 1429,
+        "fp": 20,
+        "fn": 30,
+        "tp": 21
+      }
+    },
+    {
+      "model": "Logistic Regression",
+      "profile": 2,
+      "method": "class_weight",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "C": 0.3
+      },
+      "train_ap": 0.4717026285782879,
+      "cv_ap": 0.45734938047347723,
+      "cv_sd": 0.029567528738992162,
+      "gap": 0.01435324810481057,
+      "threshold": 0.5667978203362363,
+      "val": {
+        "threshold": 0.5667978203362363,
+        "ap": 0.3880125478173511,
+        "precision": 0.4489795918367347,
+        "recall": 0.43137254901960786,
+        "f1": 0.44,
+        "tn": 1422,
+        "fp": 27,
+        "fn": 29,
+        "tp": 22
+      }
+    },
+    {
+      "model": "Logistic Regression",
+      "profile": 2,
+      "method": "smotenc_25",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "C": 0.3
+      },
+      "train_ap": 0.45866455337974416,
+      "cv_ap": 0.44683216585107716,
+      "cv_sd": 0.029026328433233696,
+      "gap": 0.011832387528666952,
+      "threshold": 0.7262082850863804,
+      "val": {
+        "threshold": 0.7262082850863804,
+        "ap": 0.3695294132995875,
+        "precision": 0.48717948717948717,
+        "recall": 0.37254901960784315,
+        "f1": 0.4222222222222222,
+        "tn": 1429,
+        "fp": 20,
+        "fn": 32,
+        "tp": 19
+      }
+    },
+    {
+      "model": "Random Forest",
+      "profile": 1,
+      "method": "baseline",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 6,
+        "min_samples_leaf": 10
+      },
+      "train_ap": 0.7940282286073019,
+      "cv_ap": 0.664372085414033,
+      "cv_sd": 0.03226034951635648,
+      "gap": 0.12965614319326893,
+      "threshold": 0.15043371500065242,
+      "val": {
+        "threshold": 0.15043371500065242,
+        "ap": 0.6133319698559941,
+        "precision": 0.525,
+        "recall": 0.8235294117647058,
+        "f1": 0.6412213740458015,
+        "tn": 1411,
+        "fp": 38,
+        "fn": 9,
+        "tp": 42
+      }
+    },
+    {
+      "model": "Random Forest",
+      "profile": 1,
+      "method": "class_weight",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 6,
+        "min_samples_leaf": 10
+      },
+      "train_ap": 0.8185700634939127,
+      "cv_ap": 0.6375115539795299,
+      "cv_sd": 0.04718318046832822,
+      "gap": 0.18105850951438285,
+      "threshold": 0.4214687370978021,
+      "val": {
+        "threshold": 0.4214687370978021,
+        "ap": 0.5937413820609472,
+        "precision": 0.5873015873015873,
+        "recall": 0.7254901960784313,
+        "f1": 0.6491228070175439,
+        "tn": 1423,
+        "fp": 26,
+        "fn": 14,
+        "tp": 37
+      }
+    },
+    {
+      "model": "Random Forest",
+      "profile": 1,
+      "method": "smotenc_25",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 6,
+        "min_samples_leaf": 10
+      },
+      "train_ap": 0.798678489290177,
+      "cv_ap": 0.6278962197068735,
+      "cv_sd": 0.027021079141838118,
+      "gap": 0.17078226958330353,
+      "threshold": 0.477196767597332,
+      "val": {
+        "threshold": 0.477196767597332,
+        "ap": 0.5962386848257503,
+        "precision": 0.5507246376811594,
+        "recall": 0.7450980392156863,
+        "f1": 0.6333333333333333,
+        "tn": 1418,
+        "fp": 31,
+        "fn": 13,
+        "tp": 38
+      }
+    },
+    {
+      "model": "Random Forest",
+      "profile": 2,
+      "method": "baseline",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 12,
+        "min_samples_leaf": 6
+      },
+      "train_ap": 0.9075583298089801,
+      "cv_ap": 0.7084662008241341,
+      "cv_sd": 0.042911341100729264,
+      "gap": 0.19909212898484605,
+      "threshold": 0.25469608813654077,
+      "val": {
+        "threshold": 0.25469608813654077,
+        "ap": 0.7199546326539011,
+        "precision": 0.6981132075471698,
+        "recall": 0.7254901960784313,
+        "f1": 0.7115384615384616,
+        "tn": 1433,
+        "fp": 16,
+        "fn": 14,
+        "tp": 37
+      }
+    },
+    {
+      "model": "Random Forest",
+      "profile": 2,
+      "method": "class_weight",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 12,
+        "min_samples_leaf": 6
+      },
+      "train_ap": 0.941657876143469,
+      "cv_ap": 0.6901703207745253,
+      "cv_sd": 0.052056298703572486,
+      "gap": 0.2514875553689438,
+      "threshold": 0.41027597357835166,
+      "val": {
+        "threshold": 0.41027597357835166,
+        "ap": 0.6898205061576134,
+        "precision": 0.639344262295082,
+        "recall": 0.7647058823529411,
+        "f1": 0.6964285714285714,
+        "tn": 1427,
+        "fp": 22,
+        "fn": 12,
+        "tp": 39
+      }
+    },
+    {
+      "model": "Random Forest",
+      "profile": 2,
+      "method": "smotenc_25",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 12,
+        "min_samples_leaf": 6
+      },
+      "train_ap": 0.929955562225428,
+      "cv_ap": 0.6866410957167935,
+      "cv_sd": 0.040419390679619256,
+      "gap": 0.24331446650863442,
+      "threshold": 0.5327337436211418,
+      "val": {
+        "threshold": 0.5327337436211418,
+        "ap": 0.6642212723732944,
+        "precision": 0.6363636363636364,
+        "recall": 0.6862745098039216,
+        "f1": 0.660377358490566,
+        "tn": 1429,
+        "fp": 20,
+        "fn": 16,
+        "tp": 35
+      }
+    },
+    {
+      "model": "LightGBM",
+      "profile": 1,
+      "method": "baseline",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 3,
+        "num_leaves": 7,
+        "n_estimators": 210,
+        "min_child_samples": 22,
+        "reg_lambda": 4
+      },
+      "train_ap": 0.8836591123513466,
+      "cv_ap": 0.7240234826750381,
+      "cv_sd": 0.042423834929687425,
+      "gap": 0.15963562967630865,
+      "threshold": 0.45443282786870426,
+      "val": {
+        "threshold": 0.45443282786870426,
+        "ap": 0.7512789937546882,
+        "precision": 0.8421052631578947,
+        "recall": 0.6274509803921569,
+        "f1": 0.7191011235955056,
+        "tn": 1443,
+        "fp": 6,
+        "fn": 19,
+        "tp": 32
+      }
+    },
+    {
+      "model": "LightGBM",
+      "profile": 1,
+      "method": "class_weight",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 3,
+        "num_leaves": 7,
+        "n_estimators": 210,
+        "min_child_samples": 22,
+        "reg_lambda": 4
+      },
+      "train_ap": 0.8784450474997492,
+      "cv_ap": 0.7205051496235709,
+      "cv_sd": 0.04648620031509291,
+      "gap": 0.1579398978761782,
+      "threshold": 0.5751046159959183,
+      "val": {
+        "threshold": 0.5751046159959183,
+        "ap": 0.700237228982018,
+        "precision": 0.6862745098039216,
+        "recall": 0.6862745098039216,
+        "f1": 0.6862745098039216,
+        "tn": 1433,
+        "fp": 16,
+        "fn": 16,
+        "tp": 35
+      }
+    },
+    {
+      "model": "LightGBM",
+      "profile": 1,
+      "method": "smotenc_25",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 3,
+        "num_leaves": 7,
+        "n_estimators": 210,
+        "min_child_samples": 22,
+        "reg_lambda": 4
+      },
+      "train_ap": 0.8592372158246305,
+      "cv_ap": 0.7160759340759165,
+      "cv_sd": 0.0476083364769233,
+      "gap": 0.1431612817487141,
+      "threshold": 0.6047418726280887,
+      "val": {
+        "threshold": 0.6047418726280887,
+        "ap": 0.7223946921773624,
+        "precision": 0.6851851851851852,
+        "recall": 0.7254901960784313,
+        "f1": 0.7047619047619048,
+        "tn": 1432,
+        "fp": 17,
+        "fn": 14,
+        "tp": 37
+      }
+    },
+    {
+      "model": "LightGBM",
+      "profile": 2,
+      "method": "baseline",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 4,
+        "num_leaves": 10,
+        "n_estimators": 175,
+        "min_child_samples": 24,
+        "reg_lambda": 4
+      },
+      "train_ap": 0.9171248197120313,
+      "cv_ap": 0.7518812630620174,
+      "cv_sd": 0.04235948114984718,
+      "gap": 0.16524355665001392,
+      "threshold": 0.4533144398274266,
+      "val": {
+        "threshold": 0.4533144398274266,
+        "ap": 0.7693446389946627,
+        "precision": 0.85,
+        "recall": 0.6666666666666666,
+        "f1": 0.7472527472527473,
+        "tn": 1443,
+        "fp": 6,
+        "fn": 17,
+        "tp": 34
+      }
+    },
+    {
+      "model": "LightGBM",
+      "profile": 2,
+      "method": "class_weight",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 4,
+        "num_leaves": 10,
+        "n_estimators": 175,
+        "min_child_samples": 24,
+        "reg_lambda": 4
+      },
+      "train_ap": 0.921957874435524,
+      "cv_ap": 0.746585277207001,
+      "cv_sd": 0.033919673367553395,
+      "gap": 0.17537259722852297,
+      "threshold": 0.6209069715782384,
+      "val": {
+        "threshold": 0.6209069715782384,
+        "ap": 0.7242099016407042,
+        "precision": 0.74,
+        "recall": 0.7254901960784313,
+        "f1": 0.7326732673267327,
+        "tn": 1436,
+        "fp": 13,
+        "fn": 14,
+        "tp": 37
+      }
+    },
+    {
+      "model": "LightGBM",
+      "profile": 2,
+      "method": "smotenc_25",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 4,
+        "num_leaves": 10,
+        "n_estimators": 175,
+        "min_child_samples": 24,
+        "reg_lambda": 4
+      },
+      "train_ap": 0.8963252277334347,
+      "cv_ap": 0.7480595925726153,
+      "cv_sd": 0.04312803783594284,
+      "gap": 0.14826563516081936,
+      "threshold": 0.647804283295263,
+      "val": {
+        "threshold": 0.647804283295263,
+        "ap": 0.7146186269864407,
+        "precision": 0.673469387755102,
+        "recall": 0.6470588235294118,
+        "f1": 0.66,
+        "tn": 1433,
+        "fp": 16,
+        "fn": 18,
+        "tp": 33
+      }
+    },
+    {
+      "model": "LightGBM",
+      "profile": 2,
+      "method": "numeric_baseline",
+      "columns": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 4,
+        "num_leaves": 10,
+        "n_estimators": 175,
+        "min_child_samples": 24,
+        "reg_lambda": 4
+      },
+      "train_ap": 0.9103457280299012,
+      "cv_ap": 0.7223188266600821,
+      "cv_sd": 0.02715134633970941,
+      "gap": 0.18802690136981917,
+      "threshold": 0.2535331351671234,
+      "val": {
+        "threshold": 0.2535331351671234,
+        "ap": 0.7827947429638313,
+        "precision": 0.7049180327868853,
+        "recall": 0.8431372549019608,
+        "f1": 0.7678571428571429,
+        "tn": 1431,
+        "fp": 18,
+        "fn": 8,
+        "tp": 43
+      }
+    },
+    {
+      "model": "LightGBM",
+      "profile": 2,
+      "method": "smote_numeric",
+      "columns": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 4,
+        "num_leaves": 10,
+        "n_estimators": 175,
+        "min_child_samples": 24,
+        "reg_lambda": 4
+      },
+      "train_ap": 0.8930378884532839,
+      "cv_ap": 0.7242568000247763,
+      "cv_sd": 0.031621396475539146,
+      "gap": 0.1687810884285077,
+      "threshold": 0.5556546748694843,
+      "val": {
+        "threshold": 0.5556546748694843,
+        "ap": 0.7312103845622602,
+        "precision": 0.6724137931034483,
+        "recall": 0.7647058823529411,
+        "f1": 0.7155963302752294,
+        "tn": 1430,
+        "fp": 19,
+        "fn": 12,
+        "tp": 39
+      }
+    },
+    {
+      "model": "LightGBM",
+      "profile": 3,
+      "method": "baseline",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 4,
+        "num_leaves": 12,
+        "n_estimators": 200,
+        "min_child_samples": 20,
+        "reg_lambda": 3
+      },
+      "train_ap": 0.9396282927800802,
+      "cv_ap": 0.763030171093292,
+      "cv_sd": 0.04189397658474731,
+      "gap": 0.17659812168678823,
+      "threshold": 0.31537755439431603,
+      "val": {
+        "threshold": 0.31537755439431603,
+        "ap": 0.8189607503195601,
+        "precision": 0.7843137254901961,
+        "recall": 0.7843137254901961,
+        "f1": 0.7843137254901961,
+        "tn": 1438,
+        "fp": 11,
+        "fn": 11,
+        "tp": 40
+      }
+    },
+    {
+      "model": "LightGBM",
+      "profile": 3,
+      "method": "class_weight",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 4,
+        "num_leaves": 12,
+        "n_estimators": 200,
+        "min_child_samples": 20,
+        "reg_lambda": 3
+      },
+      "train_ap": 0.9489300796137085,
+      "cv_ap": 0.7565265471630692,
+      "cv_sd": 0.03416320110077499,
+      "gap": 0.1924035324506391,
+      "threshold": 0.5522681760774735,
+      "val": {
+        "threshold": 0.5522681760774735,
+        "ap": 0.7432445566952252,
+        "precision": 0.7169811320754716,
+        "recall": 0.7450980392156863,
+        "f1": 0.7307692307692307,
+        "tn": 1434,
+        "fp": 15,
+        "fn": 13,
+        "tp": 38
+      }
+    },
+    {
+      "model": "LightGBM",
+      "profile": 3,
+      "method": "smotenc_25",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 4,
+        "num_leaves": 12,
+        "n_estimators": 200,
+        "min_child_samples": 20,
+        "reg_lambda": 3
+      },
+      "train_ap": 0.9227992319178372,
+      "cv_ap": 0.7608830529396885,
+      "cv_sd": 0.03433201929884346,
+      "gap": 0.16191617897814875,
+      "threshold": 0.6335620433039033,
+      "val": {
+        "threshold": 0.6335620433039033,
+        "ap": 0.7246607550429509,
+        "precision": 0.6862745098039216,
+        "recall": 0.6862745098039216,
+        "f1": 0.6862745098039216,
+        "tn": 1433,
+        "fp": 16,
+        "fn": 16,
+        "tp": 35
+      }
+    },
+    {
+      "model": "LightGBM",
+      "profile": 4,
+      "method": "baseline",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 5,
+        "num_leaves": 15,
+        "n_estimators": 220,
+        "min_child_samples": 20,
+        "reg_lambda": 2
+      },
+      "train_ap": 0.9767021995620847,
+      "cv_ap": 0.7728088466838114,
+      "cv_sd": 0.03884350310481486,
+      "gap": 0.20389335287827318,
+      "threshold": 0.41233314783700126,
+      "val": {
+        "threshold": 0.41233314783700126,
+        "ap": 0.7993546833717815,
+        "precision": 0.8043478260869565,
+        "recall": 0.7254901960784313,
+        "f1": 0.7628865979381443,
+        "tn": 1440,
+        "fp": 9,
+        "fn": 14,
+        "tp": 37
+      }
+    },
+    {
+      "model": "LightGBM",
+      "profile": 4,
+      "method": "class_weight",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 5,
+        "num_leaves": 15,
+        "n_estimators": 220,
+        "min_child_samples": 20,
+        "reg_lambda": 2
+      },
+      "train_ap": 0.9875317671924816,
+      "cv_ap": 0.7671871204969619,
+      "cv_sd": 0.03844435643037285,
+      "gap": 0.22034464669551967,
+      "threshold": 0.6988609259076342,
+      "val": {
+        "threshold": 0.6988609259076342,
+        "ap": 0.7412334799901426,
+        "precision": 0.7954545454545454,
+        "recall": 0.6862745098039216,
+        "f1": 0.7368421052631579,
+        "tn": 1440,
+        "fp": 9,
+        "fn": 16,
+        "tp": 35
+      }
+    },
+    {
+      "model": "LightGBM",
+      "profile": 4,
+      "method": "smotenc_25",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 5,
+        "num_leaves": 15,
+        "n_estimators": 220,
+        "min_child_samples": 20,
+        "reg_lambda": 2
+      },
+      "train_ap": 0.9619807584368392,
+      "cv_ap": 0.767554380485953,
+      "cv_sd": 0.03604936972471529,
+      "gap": 0.19442637795088621,
+      "threshold": 0.6326679222509585,
+      "val": {
+        "threshold": 0.6326679222509585,
+        "ap": 0.7304539087727138,
+        "precision": 0.7142857142857143,
+        "recall": 0.6862745098039216,
+        "f1": 0.7,
+        "tn": 1435,
+        "fp": 14,
+        "fn": 16,
+        "tp": 35
+      }
+    },
+    {
+      "model": "XGBoost",
+      "profile": 1,
+      "method": "baseline",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 3,
+        "n_estimators": 200,
+        "min_child_weight": 4,
+        "reg_lambda": 4
+      },
+      "train_ap": 0.8669998128973129,
+      "cv_ap": 0.7037580668159373,
+      "cv_sd": 0.04597826818916682,
+      "gap": 0.16324174608137568,
+      "threshold": 0.325763076543808,
+      "val": {
+        "threshold": 0.325763076543808,
+        "ap": 0.7252621777453533,
+        "precision": 0.7142857142857143,
+        "recall": 0.6862745098039216,
+        "f1": 0.7,
+        "tn": 1435,
+        "fp": 14,
+        "fn": 16,
+        "tp": 35
+      }
+    },
+    {
+      "model": "XGBoost",
+      "profile": 1,
+      "method": "class_weight",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 3,
+        "n_estimators": 200,
+        "min_child_weight": 4,
+        "reg_lambda": 4
+      },
+      "train_ap": 0.9007005289634944,
+      "cv_ap": 0.7151860489730031,
+      "cv_sd": 0.03743840640127545,
+      "gap": 0.1855144799904913,
+      "threshold": 0.6258173584938049,
+      "val": {
+        "threshold": 0.6258173584938049,
+        "ap": 0.6893573211427072,
+        "precision": 0.7674418604651163,
+        "recall": 0.6470588235294118,
+        "f1": 0.7021276595744681,
+        "tn": 1439,
+        "fp": 10,
+        "fn": 18,
+        "tp": 33
+      }
+    },
+    {
+      "model": "XGBoost",
+      "profile": 1,
+      "method": "smotenc_25",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 3,
+        "n_estimators": 200,
+        "min_child_weight": 4,
+        "reg_lambda": 4
+      },
+      "train_ap": 0.8665652740082513,
+      "cv_ap": 0.7165366504554095,
+      "cv_sd": 0.045037739558747514,
+      "gap": 0.15002862355284197,
+      "threshold": 0.6190025806427002,
+      "val": {
+        "threshold": 0.6190025806427002,
+        "ap": 0.7411149080704866,
+        "precision": 0.6851851851851852,
+        "recall": 0.7254901960784313,
+        "f1": 0.7047619047619048,
+        "tn": 1432,
+        "fp": 17,
+        "fn": 14,
+        "tp": 37
+      }
+    },
+    {
+      "model": "XGBoost",
+      "profile": 2,
+      "method": "baseline",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 4,
+        "n_estimators": 175,
+        "min_child_weight": 4,
+        "reg_lambda": 4
+      },
+      "train_ap": 0.9087176649400579,
+      "cv_ap": 0.7299846686367463,
+      "cv_sd": 0.03576156978601135,
+      "gap": 0.17873299630331183,
+      "threshold": 0.2279168665409088,
+      "val": {
+        "threshold": 0.2279168665409088,
+        "ap": 0.7549406064426815,
+        "precision": 0.6949152542372882,
+        "recall": 0.803921568627451,
+        "f1": 0.7454545454545455,
+        "tn": 1431,
+        "fp": 18,
+        "fn": 10,
+        "tp": 41
+      }
+    },
+    {
+      "model": "XGBoost",
+      "profile": 2,
+      "method": "class_weight",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 4,
+        "n_estimators": 175,
+        "min_child_weight": 4,
+        "reg_lambda": 4
+      },
+      "train_ap": 0.949636734072247,
+      "cv_ap": 0.7519966906717855,
+      "cv_sd": 0.021338511463378278,
+      "gap": 0.19764004340046157,
+      "threshold": 0.552193284034729,
+      "val": {
+        "threshold": 0.552193284034729,
+        "ap": 0.7030890932938146,
+        "precision": 0.7307692307692307,
+        "recall": 0.7450980392156863,
+        "f1": 0.7378640776699029,
+        "tn": 1435,
+        "fp": 14,
+        "fn": 13,
+        "tp": 38
+      }
+    },
+    {
+      "model": "XGBoost",
+      "profile": 2,
+      "method": "smotenc_25",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 4,
+        "n_estimators": 175,
+        "min_child_weight": 4,
+        "reg_lambda": 4
+      },
+      "train_ap": 0.9180044905096819,
+      "cv_ap": 0.751755762222046,
+      "cv_sd": 0.035951259617437864,
+      "gap": 0.16624872828763587,
+      "threshold": 0.7649598121643066,
+      "val": {
+        "threshold": 0.7649598121643066,
+        "ap": 0.7351636605625685,
+        "precision": 0.775,
+        "recall": 0.6078431372549019,
+        "f1": 0.6813186813186813,
+        "tn": 1440,
+        "fp": 9,
+        "fn": 20,
+        "tp": 31
+      }
+    },
+    {
+      "model": "XGBoost",
+      "profile": 2,
+      "method": "numeric_baseline",
+      "columns": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 4,
+        "n_estimators": 175,
+        "min_child_weight": 4,
+        "reg_lambda": 4
+      },
+      "train_ap": 0.8987258251913316,
+      "cv_ap": 0.6998746778589263,
+      "cv_sd": 0.028136135170980122,
+      "gap": 0.1988511473324053,
+      "threshold": 0.21527589857578278,
+      "val": {
+        "threshold": 0.21527589857578278,
+        "ap": 0.7577545765531852,
+        "precision": 0.6615384615384615,
+        "recall": 0.8431372549019608,
+        "f1": 0.7413793103448276,
+        "tn": 1427,
+        "fp": 22,
+        "fn": 8,
+        "tp": 43
+      }
+    },
+    {
+      "model": "XGBoost",
+      "profile": 2,
+      "method": "smote_numeric",
+      "columns": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 4,
+        "n_estimators": 175,
+        "min_child_weight": 4,
+        "reg_lambda": 4
+      },
+      "train_ap": 0.9132110845852398,
+      "cv_ap": 0.7311771254566456,
+      "cv_sd": 0.021403125690182018,
+      "gap": 0.1820339591285944,
+      "threshold": 0.6513354182243347,
+      "val": {
+        "threshold": 0.6513354182243347,
+        "ap": 0.7566855698524582,
+        "precision": 0.7291666666666666,
+        "recall": 0.6862745098039216,
+        "f1": 0.7070707070707071,
+        "tn": 1436,
+        "fp": 13,
+        "fn": 16,
+        "tp": 35
+      }
+    },
+    {
+      "model": "XGBoost",
+      "profile": 3,
+      "method": "baseline",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 4,
+        "n_estimators": 200,
+        "min_child_weight": 3,
+        "reg_lambda": 3
+      },
+      "train_ap": 0.9338435511238238,
+      "cv_ap": 0.7405465888706576,
+      "cv_sd": 0.03654980081751121,
+      "gap": 0.1932969622531661,
+      "threshold": 0.3442828953266144,
+      "val": {
+        "threshold": 0.3442828953266144,
+        "ap": 0.7670914912798829,
+        "precision": 0.8085106382978723,
+        "recall": 0.7450980392156863,
+        "f1": 0.7755102040816326,
+        "tn": 1440,
+        "fp": 9,
+        "fn": 13,
+        "tp": 38
+      }
+    },
+    {
+      "model": "XGBoost",
+      "profile": 3,
+      "method": "class_weight",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 4,
+        "n_estimators": 200,
+        "min_child_weight": 3,
+        "reg_lambda": 3
+      },
+      "train_ap": 0.9666367573304231,
+      "cv_ap": 0.7556873740066408,
+      "cv_sd": 0.022719695235047625,
+      "gap": 0.2109493833237824,
+      "threshold": 0.5485153198242188,
+      "val": {
+        "threshold": 0.5485153198242188,
+        "ap": 0.7164089798004109,
+        "precision": 0.76,
+        "recall": 0.7450980392156863,
+        "f1": 0.7524752475247525,
+        "tn": 1437,
+        "fp": 12,
+        "fn": 13,
+        "tp": 38
+      }
+    },
+    {
+      "model": "XGBoost",
+      "profile": 3,
+      "method": "smotenc_25",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 4,
+        "n_estimators": 200,
+        "min_child_weight": 3,
+        "reg_lambda": 3
+      },
+      "train_ap": 0.9347668521467497,
+      "cv_ap": 0.7532192818548188,
+      "cv_sd": 0.03274586192335507,
+      "gap": 0.18154757029193072,
+      "threshold": 0.5268049240112305,
+      "val": {
+        "threshold": 0.5268049240112305,
+        "ap": 0.7308914393668682,
+        "precision": 0.6349206349206349,
+        "recall": 0.7843137254901961,
+        "f1": 0.7017543859649122,
+        "tn": 1426,
+        "fp": 23,
+        "fn": 11,
+        "tp": 40
+      }
+    },
+    {
+      "model": "XGBoost",
+      "profile": 4,
+      "method": "baseline",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 5,
+        "n_estimators": 220,
+        "min_child_weight": 2,
+        "reg_lambda": 2
+      },
+      "train_ap": 0.9767026171301548,
+      "cv_ap": 0.7596664031112521,
+      "cv_sd": 0.024017662083614128,
+      "gap": 0.2170362140189026,
+      "threshold": 0.30862027406692505,
+      "val": {
+        "threshold": 0.30862027406692505,
+        "ap": 0.7727510513960987,
+        "precision": 0.7692307692307693,
+        "recall": 0.7843137254901961,
+        "f1": 0.7766990291262136,
+        "tn": 1437,
+        "fp": 12,
+        "fn": 11,
+        "tp": 40
+      }
+    },
+    {
+      "model": "XGBoost",
+      "profile": 4,
+      "method": "class_weight",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 5,
+        "n_estimators": 220,
+        "min_child_weight": 2,
+        "reg_lambda": 2
+      },
+      "train_ap": 0.9962147456854243,
+      "cv_ap": 0.7583592324561703,
+      "cv_sd": 0.02430549421269376,
+      "gap": 0.23785551322925405,
+      "threshold": 0.5966904163360596,
+      "val": {
+        "threshold": 0.5966904163360596,
+        "ap": 0.7279982713572278,
+        "precision": 0.76,
+        "recall": 0.7450980392156863,
+        "f1": 0.7524752475247525,
+        "tn": 1437,
+        "fp": 12,
+        "fn": 13,
+        "tp": 38
+      }
+    },
+    {
+      "model": "XGBoost",
+      "profile": 4,
+      "method": "smotenc_25",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 5,
+        "n_estimators": 220,
+        "min_child_weight": 2,
+        "reg_lambda": 2
+      },
+      "train_ap": 0.9775944128448519,
+      "cv_ap": 0.7559774860405541,
+      "cv_sd": 0.03502768362450473,
+      "gap": 0.22161692680429781,
+      "threshold": 0.6442063450813293,
+      "val": {
+        "threshold": 0.6442063450813293,
+        "ap": 0.7276482880831328,
+        "precision": 0.6862745098039216,
+        "recall": 0.6862745098039216,
+        "f1": 0.6862745098039216,
+        "tn": 1433,
+        "fp": 16,
+        "fn": 16,
+        "tp": 35
+      }
+    }
+  ],
+  "shortlist": [
+    {
+      "model": "LightGBM",
+      "profile": 3,
+      "method": "baseline",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 4,
+        "num_leaves": 12,
+        "n_estimators": 200,
+        "min_child_samples": 20,
+        "reg_lambda": 3
+      },
+      "train_ap": 0.9396282927800802,
+      "cv_ap": 0.763030171093292,
+      "cv_sd": 0.04189397658474731,
+      "gap": 0.17659812168678823,
+      "threshold": 0.31537755439431603,
+      "val": {
+        "threshold": 0.31537755439431603,
+        "ap": 0.8189607503195601,
+        "precision": 0.7843137254901961,
+        "recall": 0.7843137254901961,
+        "f1": 0.7843137254901961,
+        "tn": 1438,
+        "fp": 11,
+        "fn": 11,
+        "tp": 40
+      }
+    },
+    {
+      "model": "LightGBM",
+      "profile": 4,
+      "method": "baseline",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 5,
+        "num_leaves": 15,
+        "n_estimators": 220,
+        "min_child_samples": 20,
+        "reg_lambda": 2
+      },
+      "train_ap": 0.9767021995620847,
+      "cv_ap": 0.7728088466838114,
+      "cv_sd": 0.03884350310481486,
+      "gap": 0.20389335287827318,
+      "threshold": 0.41233314783700126,
+      "val": {
+        "threshold": 0.41233314783700126,
+        "ap": 0.7993546833717815,
+        "precision": 0.8043478260869565,
+        "recall": 0.7254901960784313,
+        "f1": 0.7628865979381443,
+        "tn": 1440,
+        "fp": 9,
+        "fn": 14,
+        "tp": 37
+      }
+    }
+  ],
+  "method_peaks": {
+    "baseline": {
+      "model": "LightGBM",
+      "profile": 4,
+      "method": "baseline",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 5,
+        "num_leaves": 15,
+        "n_estimators": 220,
+        "min_child_samples": 20,
+        "reg_lambda": 2
+      },
+      "train_ap": 0.9767021995620847,
+      "cv_ap": 0.7728088466838114,
+      "cv_sd": 0.03884350310481486,
+      "gap": 0.20389335287827318,
+      "threshold": 0.41233314783700126,
+      "val": {
+        "threshold": 0.41233314783700126,
+        "ap": 0.7993546833717815,
+        "precision": 0.8043478260869565,
+        "recall": 0.7254901960784313,
+        "f1": 0.7628865979381443,
+        "tn": 1440,
+        "fp": 9,
+        "fn": 14,
+        "tp": 37
+      }
+    },
+    "class_weight": {
+      "model": "LightGBM",
+      "profile": 4,
+      "method": "class_weight",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 5,
+        "num_leaves": 15,
+        "n_estimators": 220,
+        "min_child_samples": 20,
+        "reg_lambda": 2
+      },
+      "train_ap": 0.9875317671924816,
+      "cv_ap": 0.7671871204969619,
+      "cv_sd": 0.03844435643037285,
+      "gap": 0.22034464669551967,
+      "threshold": 0.6988609259076342,
+      "val": {
+        "threshold": 0.6988609259076342,
+        "ap": 0.7412334799901426,
+        "precision": 0.7954545454545454,
+        "recall": 0.6862745098039216,
+        "f1": 0.7368421052631579,
+        "tn": 1440,
+        "fp": 9,
+        "fn": 16,
+        "tp": 35
+      }
+    },
+    "numeric_baseline": {
+      "model": "LightGBM",
+      "profile": 2,
+      "method": "numeric_baseline",
+      "columns": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 4,
+        "num_leaves": 10,
+        "n_estimators": 175,
+        "min_child_samples": 24,
+        "reg_lambda": 4
+      },
+      "train_ap": 0.9103457280299012,
+      "cv_ap": 0.7223188266600821,
+      "cv_sd": 0.02715134633970941,
+      "gap": 0.18802690136981917,
+      "threshold": 0.2535331351671234,
+      "val": {
+        "threshold": 0.2535331351671234,
+        "ap": 0.7827947429638313,
+        "precision": 0.7049180327868853,
+        "recall": 0.8431372549019608,
+        "f1": 0.7678571428571429,
+        "tn": 1431,
+        "fp": 18,
+        "fn": 8,
+        "tp": 43
+      }
+    },
+    "smote_numeric": {
+      "model": "XGBoost",
+      "profile": 2,
+      "method": "smote_numeric",
+      "columns": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 4,
+        "n_estimators": 175,
+        "min_child_weight": 4,
+        "reg_lambda": 4
+      },
+      "train_ap": 0.9132110845852398,
+      "cv_ap": 0.7311771254566456,
+      "cv_sd": 0.021403125690182018,
+      "gap": 0.1820339591285944,
+      "threshold": 0.6513354182243347,
+      "val": {
+        "threshold": 0.6513354182243347,
+        "ap": 0.7566855698524582,
+        "precision": 0.7291666666666666,
+        "recall": 0.6862745098039216,
+        "f1": 0.7070707070707071,
+        "tn": 1436,
+        "fp": 13,
+        "fn": 16,
+        "tp": 35
+      }
+    },
+    "smotenc_25": {
+      "model": "LightGBM",
+      "profile": 4,
+      "method": "smotenc_25",
+      "columns": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "params": {
+        "max_depth": 5,
+        "num_leaves": 15,
+        "n_estimators": 220,
+        "min_child_samples": 20,
+        "reg_lambda": 2
+      },
+      "train_ap": 0.9619807584368392,
+      "cv_ap": 0.767554380485953,
+      "cv_sd": 0.03604936972471529,
+      "gap": 0.19442637795088621,
+      "threshold": 0.6326679222509585,
+      "val": {
+        "threshold": 0.6326679222509585,
+        "ap": 0.7304539087727138,
+        "precision": 0.7142857142857143,
+        "recall": 0.6862745098039216,
+        "f1": 0.7,
+        "tn": 1435,
+        "fp": 14,
+        "fn": 16,
+        "tp": 35
+      }
+    }
+  },
+  "winner_test": {
+    "threshold": 0.31537755439431603,
+    "ap": 0.7899659524388329,
+    "precision": 0.7647058823529411,
+    "recall": 0.7647058823529411,
+    "f1": 0.7647058823529411,
+    "tn": 1437,
+    "fp": 12,
+    "fn": 12,
+    "tp": 39
+  },
+  "original_test": {
+    "threshold": 0.41233314783700126,
+    "ap": 0.8188824840698542,
+    "precision": 0.925,
+    "recall": 0.7254901960784313,
+    "f1": 0.8131868131868132,
+    "tn": 1446,
+    "fp": 3,
+    "fn": 14,
+    "tp": 37
+  }
+}

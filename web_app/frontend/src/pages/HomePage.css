@@ -1,0 +1,231 @@
+.ai4i-home {
+  --home-ink: #102721;
+  --home-muted: #374f45;
+  --home-green: #145948;
+  --home-line: #b9c9bf;
+  color: var(--home-ink);
+  background: #f7faf7;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.ai4i-wrap {
+  width: min(1190px, calc(100% - 2 * clamp(20px, 4.5vw, 68px)));
+  margin-inline: auto;
+}
+
+.ai4i-home-shell .cnc-header {
+  background: rgb(247 250 247 / 96%);
+}
+
+.ai4i-home-shell .cnc-nav { width: min(1190px, calc(100% - 2 * clamp(8px, 4vw, 56px))); justify-content: space-between; }
+.ai4i-home-shell .cnc-nav-menu { background: transparent; }
+.ai4i-home-shell .cnc-nav-menu button { min-height: 44px; }
+.ai4i-home-shell footer > div { width: min(1190px, calc(100% - 2 * clamp(20px, 4.5vw, 68px))); padding-inline: 0; }
+.ai4i-home section[id] { scroll-margin-top: 82px; }
+
+.ai4i-hero {
+  min-height: calc(100svh - 72px);
+  display: grid;
+  align-items: center;
+  padding-block: clamp(28px, 5vh, 60px) 64px;
+}
+
+.ai4i-hero-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
+  align-items: center;
+  gap: clamp(28px, 5vw, 78px);
+}
+
+.ai4i-project {
+  margin-bottom: 20px;
+  color: var(--home-green);
+  font-family: "JetBrains Mono", monospace;
+  font-size: .8rem;
+  font-weight: 700;
+}
+
+.ai4i-project span { margin-inline: .35rem; color: var(--home-muted); }
+
+.ai4i-home h1,
+.ai4i-home h2 {
+  font-weight: 700;
+  letter-spacing: -.05em;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+.ai4i-home h1 { font-size: clamp(2rem, 3.2vw, 3.3rem); }
+.ai4i-home h1 span { color: var(--home-green); }
+.ai4i-home h2 { font-size: clamp(1.45rem, 2.6vw, 2.65rem); }
+
+.ai4i-intro {
+  max-width: 45ch;
+  margin-block: 20px 26px;
+  color: var(--home-muted);
+  font-size: clamp(.98rem, 1.35vw, 1.1rem);
+  line-height: 1.6;
+}
+
+.ai4i-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.ai4i-button,
+.ai4i-down {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 46px;
+  padding: 9px 14px;
+  border: 1px solid #7b9488;
+  border-radius: 9px;
+  background: #fff;
+  color: var(--home-ink);
+  font-size: .875rem;
+  font-weight: 650;
+  transition: background-color 160ms, border-color 160ms, transform 160ms;
+}
+
+.ai4i-button-primary { color: #fff; background: #145948; border-color: #145948; }
+.ai4i-button:hover, .ai4i-down:hover { background: #e9f2eb; }
+.ai4i-button-primary:hover { background: #0e4739; }
+.ai4i-button:active, .ai4i-down:active { transform: translateY(1px); }
+
+.ai4i-home :is(button, a):focus-visible {
+  outline: 2px solid #138c70;
+  outline-offset: 3px;
+}
+
+.ai4i-machine { min-width: 0; }
+.ai4i-machine .cnc-landing-viewer > div:has(> canvas) {
+  border: 1px solid #c6d8cd;
+  border-radius: 18px;
+  background-color: #e3eee7;
+  background-image:
+    radial-gradient(ellipse at 50% 44%, rgb(255 255 255 / 90%), transparent 69%),
+    linear-gradient(rgb(16 64 49 / 6%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(16 64 49 / 6%) 1px, transparent 1px);
+  background-position: center;
+  background-size: auto, 28px 28px, 28px 28px;
+}
+
+.ai4i-machine-canvas { height: clamp(365px, 58svh, 590px); }
+.ai4i-machine .cnc-landing-viewer button { min-height: 44px; min-width: 44px; border-color: #7b9488; border-radius: 9px; }
+.ai4i-machine .cnc-landing-viewer > div:last-of-type { padding-top: 12px; }
+.ai4i-down { position: absolute; bottom: -48px; left: 0; min-width: 46px; padding: 0; }
+
+.ai4i-hero[data-enter] .ai4i-hero-copy { animation: ai4i-enter 460ms ease-out both; }
+.ai4i-hero[data-enter] .ai4i-machine { animation: ai4i-enter 560ms 70ms ease-out both; }
+
+@keyframes ai4i-enter {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.ai4i-explore {
+  display: grid;
+  align-items: center;
+  min-height: min(78svh, 720px);
+  padding-block: clamp(62px, 12vw, 144px);
+  color: #f5fbf7;
+  background: #102c25;
+}
+
+.ai4i-explore-grid {
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+  align-items: start;
+  gap: clamp(30px, 6vw, 96px);
+}
+
+.ai4i-explore p { max-width: 35ch; margin-top: 18px; color: #c6d9d0; line-height: 1.65; }
+.ai4i-examples { border-top: 1px solid #527369; }
+
+.ai4i-example {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 0;
+  border-bottom: 1px solid #527369;
+  text-align: left;
+  transition: background-color 160ms, transform 160ms;
+}
+
+.ai4i-example strong { font-size: clamp(1rem, 1.8vw, 1.3rem); font-weight: 650; }
+.ai4i-example small { display: block; margin-top: 4px; font-size: .875rem; color: #c6d9d0; }
+.ai4i-example svg { flex: none; color: #9fdec8; transition: transform 160ms; }
+.ai4i-example:hover { background: #1d4136; }
+.ai4i-example:hover svg { transform: translate(2px, -2px); }
+
+.ai4i-workflow { padding-block: clamp(64px, 10vw, 132px); }
+.ai4i-workflow-heading { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 18px; }
+.ai4i-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(18px, 4vw, 56px); margin-top: clamp(28px, 5vw, 56px); }
+.ai4i-steps li { padding-top: 18px; border-top: 1px solid var(--home-line); }
+.ai4i-steps svg { color: var(--home-green); }
+.ai4i-steps h3 { margin-top: 14px; font-size: 1.125rem; font-weight: 700; }
+.ai4i-steps p { max-width: 32ch; margin-top: 8px; color: var(--home-muted); line-height: 1.6; }
+
+@media (max-width: 820px) {
+  .ai4i-hero-grid, .ai4i-explore-grid { grid-template-columns: minmax(0, 1fr); }
+  .ai4i-hero-grid { gap: 20px; }
+  .ai4i-project { margin-bottom: 12px; }
+  .ai4i-intro { margin-block: 12px 18px; }
+  .ai4i-machine-canvas { height: clamp(240px, 62vw, 380px); }
+  .ai4i-down { display: none; }
+  .ai4i-hero { padding-bottom: 38px; }
+  .ai4i-workflow-heading { align-items: flex-start; }
+}
+
+@media (max-width: 560px) {
+  .ai4i-home-shell .cnc-nav-brand { display: none; }
+  .ai4i-home-shell .cnc-nav { justify-content: center; width: 100%; }
+  .ai4i-home-shell .cnc-nav-menu { flex-wrap: nowrap; }
+  .ai4i-home-shell .cnc-nav-menu button { padding-inline: clamp(5px, 2vw, 10px); }
+  .ai4i-home h1 { font-size: clamp(1.75rem, 7.1vw, 2.28rem); }
+  .ai4i-steps { grid-template-columns: minmax(0, 1fr); }
+  .ai4i-explore { min-height: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ai4i-hero[data-enter] :is(.ai4i-hero-copy, .ai4i-machine) { animation: none; }
+  .ai4i-home :is(.ai4i-button, .ai4i-down, .ai4i-example, .ai4i-example svg) { transition: none; }
+  .ai4i-home :is(.ai4i-button, .ai4i-down):active, .ai4i-example:hover svg { transform: none; }
+}
+
+.cnc-part-inspector {
+  margin-top: 12px;
+  padding: 14px;
+  border: 1px solid #b9c9bf;
+  border-radius: 12px;
+  background: #fff;
+  color: var(--home-ink);
+}
+
+.ai4i-home .cnc-part-inspector h2 {
+  margin-bottom: 10px;
+  font-size: 1rem;
+  letter-spacing: 0;
+}
+
+.cnc-part-options { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.ai4i-machine .cnc-part-options button[aria-pressed="true"] {
+  background: var(--home-green);
+  border-color: var(--home-green);
+  color: #fff;
+}
+
+.cnc-part-detail {
+  margin-top: 12px;
+  color: var(--home-muted);
+  font-size: .875rem;
+  line-height: 1.55;
+}
+
+.cnc-part-detail strong { color: var(--home-ink); }
+.cnc-part-detail p { margin: 4px 0 0; }
+
+.ai4i-machine:has(.cnc-part-inspector:not([hidden])) ~ .ai4i-down { display: none; }

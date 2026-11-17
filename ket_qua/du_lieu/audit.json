@@ -1,0 +1,117 @@
+{
+  "raw_shape": [
+    10000,
+    14
+  ],
+  "raw_counts": {
+    "rows": 10000,
+    "normal": 9661,
+    "failure": 339
+  },
+  "missing_cells": 0,
+  "duplicate_rows": 0,
+  "types": {
+    "UDI": "int64",
+    "Product ID": "object",
+    "Type": "object",
+    "Air temperature [K]": "float64",
+    "Process temperature [K]": "float64",
+    "Rotational speed [rpm]": "int64",
+    "Torque [Nm]": "float64",
+    "Tool wear [min]": "int64",
+    "Machine failure": "int64",
+    "TWF": "int64",
+    "HDF": "int64",
+    "PWF": "int64",
+    "OSF": "int64",
+    "RNF": "int64"
+  },
+  "numeric_summary": {
+    "Air temperature [K]": {
+      "count": 10000.0,
+      "mean": 300.00493,
+      "std": 2.0002586829157516,
+      "min": 295.3,
+      "25%": 298.3,
+      "50%": 300.1,
+      "75%": 301.5,
+      "max": 304.5
+    },
+    "Process temperature [K]": {
+      "count": 10000.0,
+      "mean": 310.00555999999995,
+      "std": 1.4837342191657208,
+      "min": 305.7,
+      "25%": 308.8,
+      "50%": 310.1,
+      "75%": 311.1,
+      "max": 313.8
+    },
+    "Rotational speed [rpm]": {
+      "count": 10000.0,
+      "mean": 1538.7761,
+      "std": 179.2840959134266,
+      "min": 1168.0,
+      "25%": 1423.0,
+      "50%": 1503.0,
+      "75%": 1612.0,
+      "max": 2886.0
+    },
+    "Torque [Nm]": {
+      "count": 10000.0,
+      "mean": 39.986909999999995,
+      "std": 9.968933725121337,
+      "min": 3.8,
+      "25%": 33.2,
+      "50%": 40.1,
+      "75%": 46.8,
+      "max": 76.6
+    },
+    "Tool wear [min]": {
+      "count": 10000.0,
+      "mean": 107.951,
+      "std": 63.65414663663636,
+      "min": 0.0,
+      "25%": 53.0,
+      "50%": 108.0,
+      "75%": 162.0,
+      "max": 253.0
+    }
+  },
+  "seed": 42,
+  "features": [
+    "Type",
+    "Air temperature [K]",
+    "Process temperature [K]",
+    "Rotational speed [rpm]",
+    "Torque [Nm]",
+    "Tool wear [min]"
+  ],
+  "target": "Machine failure",
+  "excluded_from_inputs": [
+    "UDI",
+    "Product ID",
+    "TWF",
+    "HDF",
+    "PWF",
+    "OSF",
+    "RNF"
+  ],
+  "splits": {
+    "train": {
+      "rows": 7000,
+      "normal": 6763,
+      "failure": 237
+    },
+    "validation": {
+      "rows": 1500,
+      "normal": 1449,
+      "failure": 51
+    },
+    "test": {
+      "rows": 1500,
+      "normal": 1449,
+      "failure": 51
+    }
+  }
+}
