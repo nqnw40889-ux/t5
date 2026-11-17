@@ -19,7 +19,7 @@ export const ShapWaterfall: React.FC<ShapWaterfallProps> = ({ contributions }) =
             <span>Top 3 yếu tố đóng góp nhiều nhất theo TreeSHAP</span>
           </h4>
           <p className="text-xs text-slate-500 mt-0.5">
-            Đóng góp vào dự đoán của mô hình theo TreeSHAP cục bộ được tính toán cho riêng mẫu hiện tại
+            TreeSHAP giải thích đóng góp vào điểm mô hình của mẫu hiện tại, không chứng minh nguyên nhân hoặc bộ phận hỏng.
           </p>
         </div>
 
@@ -62,12 +62,12 @@ export const ShapWaterfall: React.FC<ShapWaterfallProps> = ({ contributions }) =
                     {isPositive ? (
                       <>
                         <ArrowUpRight className="w-3.5 h-3.5 text-red-600" />
-                        <span>Đẩy điểm lên cao (Tăng nguy cơ hỏng)</span>
+                        <span>Góp phần tăng điểm mô hình</span>
                       </>
                     ) : (
                       <>
                         <ArrowDownRight className="w-3.5 h-3.5 text-emerald-600" />
-                        <span>Kéo điểm xuống thấp (Giảm nguy cơ hỏng)</span>
+                        <span>Góp phần giảm điểm mô hình</span>
                       </>
                     )}
                   </span>

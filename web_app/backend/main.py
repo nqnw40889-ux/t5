@@ -32,6 +32,8 @@ app.add_middleware(
 )
 
 predictor = MaintenancePredictor.get_instance()
+from methodology import router as methodology_router
+app.include_router(methodology_router)
 
 @app.get("/api/health")
 def health():

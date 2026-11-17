@@ -1,3 +1,4 @@
+import { TestSamplePicker, type TestSample } from '../components/TestSamplePicker';
 import React, { useState, useRef, useEffect } from 'react';
 import { 
   Play, Upload, Download, RefreshCw, AlertTriangle, CheckCircle2, 
@@ -54,8 +55,29 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
       setTrainStats(data.train_stats);
     }).catch(error => setMetadataError(error.message));
   }, []);
-  const [tab, setTab] = useState<'manual' | 'csv'>('manual');
+  const [tab, setTab] = useState<'manual' | 'csv' | 'test'>('manual');
 
+  const [selectedTest, setSelectedTest] = useState<TestSample>();
+  const [testEdited, setTestEdited] = useState(false);
+  const chooseTest = (sample: TestSample) => {
+    setSelectedTest(sample);
+    setTestEdited(false);
+    setInputs(sample.inputs);
+    setResult(null);
+    setErrorMsg(null);
+    setChecked(false);
+    setSampleName('Mẫu Test UDI ' + sample.id);
+  };
+  const markEdited = () => {
+    if (selectedTest) {
+      setTestEdited(true);
+      setResult(previous => {
+        if (!previous?.test_comparison) return previous;
+        const { test_comparison, ...prediction } = previous;
+        return prediction;
+      });
+    }
+  };
   // Form Inputs
   const [inputs, setInputs] = useState<PredictionDraft>(() => sample === 'failure' ? failurePreset : sample === 'normal' ? normalPreset : {
     Type: 'L',
@@ -93,30 +115,11 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
   // Ref for the result panel to enable smart auto-scrolling
   const resultRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll effect after prediction result appears
-  const triggerAutoScroll = () => {
-    setTimeout(() => {
-      if (resultRef.current) {
-        const rect = resultRef.current.getBoundingClientRect();
-        const navOffset = 80; // Leave room so sticky header does not obscure title
-        // Check if top of result is out of viewport (either scrolled above or below)
-        const isOutOfView = rect.top < navOffset || rect.top > (window.innerHeight - 100);
-        if (isOutOfView) {
-          const targetY = window.pageYOffset + rect.top - navOffset;
-          const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-          window.scrollTo({
-            top: Math.max(0, targetY),
-            behavior: prefersReduced ? 'auto' : 'smooth',
-          });
-        }
-      }
-    }, 60);
-  };
-
   // Sample Presets
   const applyPreset = (presetType: 'normal' | 'failure' | 'out_of_range') => {
     setErrorMsg(null);
     setChecked(false);
+    markEdited();
     setSampleName(presetType === 'normal' ? 'Mẫu bình thường' : presetType === 'failure' ? 'Mẫu cảnh báo' : 'Mẫu ngoài dải');
     if (presetType === 'normal') {
       setInputs(normalPreset);
@@ -148,16 +151,17 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
     sensorFields.forEach(({ key }) => { payload[key] = parseSensorValue(inputs[key]); });
     setLoading(true);
     try {
-      const resp = await fetch('/api/predict', {
+      const useTest = tab === 'test' && selectedTest && !testEdited;
+      const resp = await fetch(useTest ? '/api/test-samples/' + selectedTest.id + '/predict' : '/api/predict', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: useTest ? undefined : JSON.stringify(payload),
         signal: AbortSignal.timeout(30000),
       });
       const data = await readPredictionResponse<PredictionResult>(resp, 'Máy chủ không thể hoàn tất lượt dự đoán. Hãy thử lại.');
       setResult(data);
       setManualReport(onRecord({ ...manualSummary(data), sampleName }));
-      triggerAutoScroll();
+
     } catch (error) {
       setErrorMsg(predictionError(error, 'Không thể dự đoán. Hãy thử lại.'));
     } finally {
@@ -231,7 +235,7 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
       if (controller.signal.aborted) return;
       setCsvDetail(data);
       setCsvDetailStatus(null);
-      triggerAutoScroll();
+
     } catch {
       if (!controller.signal.aborted) setCsvDetailStatus('error');
     } finally {
@@ -319,6 +323,7 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
           >
             Nhập tay (6 thông số)
           </button>
+          <button type="button" className="app-button" aria-pressed={tab === 'test'} onClick={() => setTab('test')}>Mẫu Test</button>
           <button
             onClick={() => setTab('csv')}
             className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all flex items-center gap-1.5 ${
@@ -341,12 +346,13 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
           </button>
         </div>
       )}
+      {tab === 'test' && <><TestSamplePicker disabled={loading} onSelect={chooseTest} />{selectedTest && <p role="status">{testEdited ? 'Mẫu đã chỉnh sửa' : 'Đã nạp mẫu Test UDI ' + selectedTest.id}</p>}</>}
       {/* Main Content Area */}
-      {tab === 'manual' ? (
+      {tab !== 'csv' ? (
         /* ================= MANUAL INPUT MODE ================= */
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Left Column: Input Form (Desktop: 5 cols) */}
-          <div className={`p-5 sm:p-6 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-5 ${result ? "lg:col-span-12" : "lg:col-span-5"}`}>
+          <div className={`p-5 sm:p-6 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-5 lg:col-span-5`}>
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
               <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
                 6 Thông số đầu vào
@@ -388,6 +394,7 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
                 <select id="product-type" name="Type"
                   value={inputs.Type}
                    onChange={e => {
+                     markEdited();
                      setSampleName(undefined);
                      setInputs({ ...inputs, Type: e.target.value as PredictionInputs['Type'] });
                    }}
@@ -421,7 +428,8 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
                         aria-describedby={`${id}-hint${invalid ? ` ${id}-error` : ''}`}
                         onBlur={() => { if (value === '') setChecked(true); }}
                          onChange={event => {
-                           setSampleName(undefined);
+                           markEdited();
+                     setSampleName(undefined);
                            setInputs(previous => ({ ...previous, [key]: event.target.value }));
                          }}
                         className={`w-full rounded-lg border bg-slate-50 px-3 py-2 font-mono text-sm text-slate-900 ${invalid ? 'border-red-500' : 'border-slate-300'}`}
@@ -448,7 +456,7 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={loading || !trainStats}
+                disabled={loading || !trainStats || (tab === 'test' && !selectedTest)}
                 className="w-full py-3.5 rounded-xl bg-teal-600 hover:bg-teal-700 active:scale-95 text-white font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
               >
                 {loading ? (
@@ -467,13 +475,13 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
           </div>
 
           {/* Right Column: Result Panel or Standby Preview (Desktop: 7 cols) */}
-          <div className={result ? "lg:col-span-12" : "lg:col-span-7"}>
+          <div className="min-w-0 lg:col-span-7">
             {!result ? (
               /* Standby Placeholder when no prediction has been made yet */
               <div className="p-6 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-4">
                 <div className="flex items-center justify-between border-b border-slate-200 pb-2">
                   <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
-                    Khung nhìn Máy phay CNC 3D
+                    Mô hình thiết bị minh họa
                   </span>
                   <span className="text-xs text-slate-500 font-medium">Chế độ chờ</span>
                 </div>
@@ -481,7 +489,7 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
                   status="illustrative" 
                   interactive={true} 
                   height="h-64 sm:h-72" 
-                  caption="Máy phay CNC 3D minh họa quy trình gia công trong bộ dữ liệu AI4I 2020"
+                  caption="Mô hình thiết bị minh họa"
                 />
                 <div className="text-center pt-2">
                   <h3 className="text-sm font-bold text-slate-800">Sẵn sàng nhận dữ liệu dự đoán</h3>
@@ -518,6 +526,11 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
                 </div>
 
                 {result.out_of_range_warnings.length > 0 && <p role="status" className="text-amber-800">Kết quả tham khảo. Kết quả ngoài phạm vi Train không đủ cơ sở kết luận.</p>}
+                {result.test_comparison && !testEdited && <section className="method-panel" aria-label="Đối chiếu nhãn Test">
+                  <h3>Đối chiếu mẫu Test UDI {result.test_comparison.id}</h3>
+                  <p>Nhãn thật {result.test_comparison.label ? 'Có hỏng' : 'Bình thường'} · Dự đoán {result.status_label}</p>
+                  <p>{result.test_comparison.outcome} · {({ TP: 'Nhận đúng mẫu hỏng', TN: 'Nhận đúng mẫu bình thường', FP: 'Báo nhầm mẫu bình thường', FN: 'Bỏ sót mẫu hỏng' })[result.test_comparison.outcome]}</p>
+                </section>}
                 <dl className="watt-kpis">
                   <div>
                     <dt>Điểm mô hình</dt>
@@ -576,7 +589,7 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
                     status={result.is_failure ? 'failure' : 'normal'} 
                     interactive={true} 
                     height="h-64 sm:h-72" 
-                    caption="Máy phay CNC 3D minh họa quy trình gia công trong bộ dữ liệu AI4I 2020"
+                    caption="Mô hình thiết bị minh họa"
                   />
                 </div>
 
@@ -843,7 +856,7 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
                       status={csvDetail.is_failure ? 'failure' : 'normal'} 
                       interactive={true} 
                       height="h-56" 
-                      caption="Máy phay CNC 3D minh họa quy trình gia công trong bộ dữ liệu AI4I 2020"
+                      caption="Mô hình thiết bị minh họa"
                     />
 
                     {/* Top 3 TreeSHAP */}

@@ -190,32 +190,14 @@ class MaintenancePredictor:
             suggestions = ["Kết quả ngoài phạm vi Train không đủ cơ sở kết luận",
                            "Đối chiếu lại số đo cảm biến và các thông số vượt dải trước khi sử dụng kết quả tham khảo."]
         elif is_failure:
-            speed = float(df["Rotational speed [rpm]"].iloc[0])
-            torque = float(df["Torque [Nm]"].iloc[0])
-            tool_wear = float(df["Tool wear [min]"].iloc[0])
-            air_temp = float(df["Air temperature [K]"].iloc[0])
-            proc_temp = float(df["Process temperature [K]"].iloc[0])
-            temp_diff = proc_temp - air_temp
-
-            # Prioritize based on highest contributing factors
-            top_columns = [item["column"] for item in top_3 if item["contribution"] > 0]
-            
-            if "Torque [Nm]" in top_columns or "Rotational speed [rpm]" in top_columns or torque >= 55.0 or speed <= 1300 or speed >= 2000:
-                suggestions.append("Đối chiếu tải trọng làm việc của trục chính và kiểm tra mô-men xoắn/tốc độ quay thực tế để phòng ngừa quá tải công suất hoặc kẹt cơ khí.")
-            
-            if "Tool wear [min]" in top_columns or tool_wear >= 180.0:
-                suggestions.append("Đo trực tiếp độ mòn cạnh cắt của dao gia công, kiểm tra rung động phôi và cân nhắc thay dao định kỳ.")
-                
-            if ("Process temperature [K]" in top_columns or "Air temperature [K]" in top_columns or temp_diff < 8.6) and len(suggestions) < 2:
-                suggestions.append("Kiểm tra hệ thống tản nhiệt và lưu lượng bơm dung dịch làm mát quanh khu vực gia công do chênh lệch nhiệt độ bất thường.")
-                
+            suggestions = [
+                "Đối chiếu lại số đo " + item["column_vn"] + " vì thông số này góp phần tăng điểm mô hình. TreeSHAP không xác định nguyên nhân hỏng."
+                for item in top_3 if item["contribution"] > 0
+            ][:2]
             if not suggestions:
-                suggestions.append("Đối chiếu lại số liệu cảm biến với thiết bị đo chuẩn ngoài và kiểm tra rung động tại các gối đỡ trục.")
-                suggestions.append("Theo dõi liên tục chu kỳ tải tiếp theo trước khi vận hành ở tốc độ tối đa.")
+                suggestions = ["Đối chiếu lại số đo cảm biến và kết quả kiểm tra thiết bị."]
         else:
-            suggestions.append("Mô hình dự đoán bình thường tại ngưỡng đã lưu")
-            if out_of_range_warnings:
-                suggestions.append("Lưu ý: Có thông số nằm ngoài dải quan sát của tập Train, khuyến nghị kiểm tra lại số đo cảm biến.")
+            suggestions = ["Mô hình dự đoán bình thường tại ngưỡng đã lưu"]
 
         return {
             "inputs": {

@@ -3,6 +3,7 @@ import { Navbar } from './components/Navbar';
 import { HomePage } from './pages/HomePage';
 import { PredictPage } from './pages/PredictPage';
 import { TestResultsPage } from './pages/TestResultsPage';
+import { MethodologyPage } from './pages/MethodologyPage';
 import { HistoryPage } from './pages/HistoryPage';
 import { PredictionReport } from './components/PredictionReport';
 import type { HistoryEntry } from './reporting';
@@ -10,7 +11,7 @@ import { ShieldCheck, Cpu } from 'lucide-react';
 import './app-theme.css';
 
 export const App: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'home' | 'predict' | 'test' | 'history'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'predict' | 'test' | 'history' | 'method'>('home');
   const [sample, setSample] = useState<'normal' | 'failure'>();
   const [testSection, setTestSection] = useState<'validation' | 'missed'>();
   const [report, setReport] = useState<HistoryEntry>();
@@ -90,6 +91,7 @@ export const App: React.FC = () => {
         {activeTab === 'home' && <HomePage onNavigate={navigate} onTrySample={() => trySample('normal')} onTryWarning={() => trySample('failure')} onOpenTest={openTest} />}
         {activeTab === 'predict' && <PredictPage sample={sample} onRecord={record} onReport={setReport} />}
         {activeTab === 'test' && <TestResultsPage section={testSection} />}
+        {activeTab === 'method' && <MethodologyPage />}
         {activeTab === 'history' && <HistoryPage entries={history} saved={saved} onStart={() => trySample('normal')} onReport={setReport} />}
       </main>
 

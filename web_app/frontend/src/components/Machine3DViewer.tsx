@@ -48,7 +48,7 @@ export const Machine3DViewer: React.FC<Machine3DViewerProps> = ({
   heroPoster,
   autoRotate = false,
   exploreParts = false,
-  caption = 'Máy phay CNC 3D minh họa quy trình gia công trong bộ dữ liệu AI4I 2020',
+  caption = 'Mô hình thiết bị minh họa',
 }) => {
   const [exploded, setExploded] = useState(false);
   const explodedRef = useRef(false);
@@ -748,7 +748,7 @@ export const Machine3DViewer: React.FC<Machine3DViewerProps> = ({
       )}
 
       {/* Mandatory explicit caption */}
-      {caption && (!heroPoster || (webGLAvailable && !use2DFallback)) && (
+      {caption && (
         <p className="text-[11px] text-slate-400 text-center mt-1.5 italic">
           {heroPoster ? caption : `* ${caption}`}
         </p>

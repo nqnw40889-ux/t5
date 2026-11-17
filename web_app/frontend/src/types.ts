@@ -32,6 +32,7 @@ export interface RangeCheckItem {
 }
 
 export interface PredictionResult {
+  test_comparison?: { id: number; label: number; outcome: "TP" | "TN" | "FP" | "FN" };
   inputs: PredictionInputs;
   model_score: number;
   model_score_percent: number;

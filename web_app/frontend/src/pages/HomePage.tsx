@@ -31,7 +31,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onTrySample, onT
           <div className="ai4i-hero-copy">
             <p className="ai4i-project">AI4I 2020 <span aria-hidden="true">/</span> Nhóm 16</p>
             <h1 id="home-title">Dự đoán hỏng hóc máy phục vụ bảo trì dự đoán <span>trên dữ liệu cảm biến mất cân bằng</span></h1>
-            <p className="ai4i-intro">Nhập thông số vận hành để xem điểm LightGBM, cảnh báo hỏng máy CNC và các yếu tố ảnh hưởng đến dự đoán.</p>
+            <p className="ai4i-intro">Nhập thông số vận hành để xem điểm LightGBM, cảnh báo hỏng thiết bị và các yếu tố ảnh hưởng đến dự đoán.</p>
             <div className="ai4i-actions">
               <button type="button" className="ai4i-button ai4i-button-primary" onClick={() => onNavigate('predict')}>
                 Nhập thông số máy <ArrowUpRight size={17} aria-hidden="true" />
@@ -46,7 +46,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onTrySample, onT
               autoRotate
               exploreParts
               height="ai4i-machine-canvas"
-              caption=""
+              caption="Mô hình thiết bị minh họa"
             />
           </figure>
           <a className="ai4i-down" href="#kham-pha" aria-label="Tới phần khám phá kết quả"><ArrowDown size={18} aria-hidden="true" /></a>

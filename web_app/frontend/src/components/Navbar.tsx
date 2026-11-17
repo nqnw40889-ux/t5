@@ -2,8 +2,8 @@ import React from 'react';
 import { Asterisk, Moon, Sun } from 'lucide-react';
 
 interface NavbarProps {
-  activeTab: 'home' | 'predict' | 'test' | 'history';
-  setActiveTab: (tab: 'home' | 'predict' | 'test' | 'history') => void;
+  activeTab: 'home' | 'predict' | 'test' | 'history' | 'method';
+  setActiveTab: (tab: 'home' | 'predict' | 'test' | 'history' | 'method') => void;
   theme: 'light' | 'dark';
   onToggleTheme: () => void;
 }
@@ -29,6 +29,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, theme, 
         <button type="button" aria-current={activeTab === 'test' ? 'page' : undefined} onClick={() => setActiveTab('test')}>
           Kết quả kiểm thử
         </button>
+        <button type="button" aria-current={activeTab === 'method' ? 'page' : undefined} onClick={() => setActiveTab('method')}>Dữ liệu &amp; phương pháp</button>
         <button type="button" aria-current={activeTab === 'history' ? 'page' : undefined} onClick={() => setActiveTab('history')}>
           Lịch sử
         </button>

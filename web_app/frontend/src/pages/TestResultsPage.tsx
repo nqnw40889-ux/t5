@@ -1,3 +1,4 @@
+import { TrainValidationChart } from '../components/TrainValidationChart';
 import React, { useEffect, useState } from 'react';
 import { 
   BarChart3, CheckCircle2, AlertTriangle, ShieldCheck, Database, 
@@ -14,6 +15,7 @@ export const TestResultsPage: React.FC<{ section?: 'validation' | 'missed' }> = 
   const [error, setError] = useState<string | null>(null);
 
   // Filters for 40 configs
+  const [expanded, setExpanded] = useState(false);
   const [modelFilter, setModelFilter] = useState<string>('all');
   const [methodFilter, setMethodFilter] = useState<string>('all');
 
@@ -84,6 +86,9 @@ export const TestResultsPage: React.FC<{ section?: 'validation' | 'missed' }> = 
     if (misclassFilter === 'fn') return m.du_doan_hong === 0 && m['Machine failure'] === 1;
     return true;
   });
+
+  const topComparisons = [...filteredConfigs].filter(c => !c.selected).sort((a,b) => b.val_ap-a.val_ap).slice(0,4);
+  const shownConfigs = expanded ? filteredConfigs : filteredConfigs.filter(c => c.selected || topComparisons.includes(c));
 
   return (
     <div className="space-y-8 pb-16">
@@ -321,6 +326,7 @@ export const TestResultsPage: React.FC<{ section?: 'validation' | 'missed' }> = 
         </div>
       </div>
 
+      <TrainValidationChart configurations={configurations} />
       {/* Section: Comparison of 40 Experimental Configurations */}
       <div className="p-5 sm:p-6 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3">
@@ -366,6 +372,9 @@ export const TestResultsPage: React.FC<{ section?: 'validation' | 'missed' }> = 
           </div>
         </div>
 
+        <p className="text-sm text-slate-600">Bản thu gọn hiển thị cấu hình được chọn nếu khớp bộ lọc và tối đa 4 cấu hình còn lại có Validation AP cao nhất trong bộ lọc. Cột Gap gốc = Train AP − CV AP.</p>
+        <button type="button" className="app-button" aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>{expanded ? 'Thu gọn' : 'Xem toàn bộ 40 cấu hình'}</button>
+        <p role="status">{shownConfigs.length} / {filteredConfigs.length} cấu hình phù hợp</p>
         {/* Table of 40 Configs */}
         <div className="overflow-x-auto max-h-80 border border-slate-200 rounded-xl">
           <table className="w-full text-left text-xs font-mono">
@@ -383,7 +392,7 @@ export const TestResultsPage: React.FC<{ section?: 'validation' | 'missed' }> = 
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200 bg-white text-slate-700">
-              {filteredConfigs.map((c, i) => (
+              {shownConfigs.map((c, i) => (
                 <tr 
                   key={i}
                   className={`hover:bg-slate-50 transition-colors ${
