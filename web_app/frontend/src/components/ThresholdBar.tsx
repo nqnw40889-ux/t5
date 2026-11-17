@@ -11,13 +11,15 @@ interface ThresholdBarProps {
 }
 
 export const ThresholdBar: React.FC<ThresholdBarProps> = ({
+  score,
+  exactThreshold,
   scorePercent,
   displayThresholdPercent,
   isFailure,
   className = '',
 }) => {
-  const thresholdPct = displayThresholdPercent;
-  const pinPositionPct = Math.max(0, Math.min(100, scorePercent));
+  const thresholdPct = exactThreshold * 100;
+  const pinPositionPct = Math.max(0, Math.min(100, score * 100));
 
   return (
     <div className={`p-4 rounded-xl border border-slate-200 bg-white shadow-sm ${className}`}>

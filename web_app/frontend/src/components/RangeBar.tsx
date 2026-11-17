@@ -18,7 +18,7 @@ export const RangeBar: React.FC<RangeBarProps> = ({ rangeChecks, outOfRangeWarni
             <span>Đối chiếu thông số với tập dữ liệu huấn luyện (Train)</span>
           </h4>
           <p className="text-xs text-slate-500 mt-0.5">
-            Dải giá trị quan sát tối thiểu, trung vị và tối đa được tính từ 7.000 mẫu Train đã lưu
+            Dải giá trị quan sát tối thiểu, trung vị và tối đa được tính từ tập Train đã lưu
           </p>
         </div>
 

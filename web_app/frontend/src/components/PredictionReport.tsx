@@ -25,6 +25,8 @@ export function PredictionReport({ entry, onClose }: { entry: HistoryEntry; onCl
         </header>
         <section>
           <h3>Kết quả dự đoán</h3>
+          {!!entry.outOfRangeCount && <p>{entry.outOfRangeCount} mẫu ngoài Train chỉ có kết quả tham khảo. Đối chiếu lại số đo trước khi sử dụng.</p>}
+          {result?.out_of_range_warnings.length ? <p>Kết quả tham khảo. Kết quả ngoài phạm vi Train không đủ cơ sở kết luận. Đối chiếu lại số đo cảm biến.</p> : null}
           <p>{result ? result.status_label : `${entry.failures} cảnh báo hỏng trên ${entry.total} mẫu`}</p>
           {score !== undefined && <p>Điểm mô hình: {formatNumber.format(score)}%</p>}
           {threshold !== undefined && <p>Ngưỡng quyết định: {formatNumber.format(threshold * 100)}% (giá trị lưu: {threshold})</p>}

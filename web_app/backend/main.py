@@ -7,7 +7,7 @@ import io
 import json
 import numpy as np
 import pandas as pd
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi import FastAPI, File, UploadFile, HTTPException, Body
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response, FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -33,17 +33,6 @@ app.add_middleware(
 
 predictor = MaintenancePredictor.get_instance()
 
-class PredictRequest(BaseModel):
-    Type: str = Field(..., description="Loại máy: L, M hoặc H")
-    Air_temperature_K: float = Field(..., alias="Air temperature [K]", description="Nhiệt độ không khí [K]")
-    Process_temperature_K: float = Field(..., alias="Process temperature [K]", description="Nhiệt độ quy trình [K]")
-    Rotational_speed_rpm: float = Field(..., alias="Rotational speed [rpm]", description="Tốc độ quay [rpm]")
-    Torque_Nm: float = Field(..., alias="Torque [Nm]", description="Mô-men xoắn [Nm]")
-    Tool_wear_min: float = Field(..., alias="Tool wear [min]", description="Độ mòn dao [min]")
-
-    class Config:
-        populate_by_name = True
-
 @app.get("/api/health")
 def health():
     return {
@@ -66,24 +55,15 @@ def get_metadata():
     }
 
 @app.post("/api/predict")
-def predict_manual(req: PredictRequest):
+def predict_manual(req: dict = Body(...)):
     try:
-        input_dict = {
-            "Type": req.Type,
-            "Air temperature [K]": req.Air_temperature_K,
-            "Process temperature [K]": req.Process_temperature_K,
-            "Rotational speed [rpm]": req.Rotational_speed_rpm,
-            "Torque [Nm]": req.Torque_Nm,
-            "Tool wear [min]": req.Tool_wear_min,
-        }
-        res = predictor.predict_single(input_dict)
-        return res
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        return predictor.predict_single(req)
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail=str(error))
 
 @app.post("/api/predict-csv")
 async def predict_csv_upload(file: UploadFile = File(...)):
-    if not file.filename.endswith(".csv"):
+    if not (file.filename or "").lower().endswith(".csv"):
         raise HTTPException(status_code=400, detail="Vui lòng tải lên tệp có định dạng .csv.")
     try:
         contents = await file.read()
@@ -118,7 +98,7 @@ def get_validation_thresholds():
     """Serve the saved validation sweep with the frozen decision threshold."""
     path = EXP_DIR / "quet_nguong_validation.csv"
     if not path.is_file():
-        raise HTTPException(status_code=404, detail="Saved validation sweep is unavailable.")
+        raise HTTPException(status_code=404, detail="Thiếu tệp kết quả quét ngưỡng Validation.")
     sweep = pd.read_csv(
         path,
         usecols=["threshold", "precision", "recall", "f1"],
@@ -137,19 +117,25 @@ def get_test_results():
     try:
         # 1. Test & Validation metrics from ket_qua.json
         meta = predictor.metadata
-        winner_test = meta.get("winner_test", {})
-        winner_val = meta.get("winner", {}).get("val", {})
+        winner_test = meta["winner_test"]
+        for key in ("tn", "fp", "fn", "tp", "precision", "recall", "f1", "ap", "threshold"):
+            if key not in winner_test or not np.isfinite(winner_test[key]):
+                raise ValueError(f"Thiếu hoặc sai trường kết quả {key}")
+        winner_val = meta["winner"]["val"]
+        for key in ("precision", "recall", "f1", "ap", "threshold"):
+            if key not in winner_val or not np.isfinite(winner_val[key]):
+                raise ValueError(f"Thiếu hoặc sai trường Validation {key}")
         
         # 2. PR curve points computed from saved du_doan_test.csv
         test_pred_path = EXP_DIR / "du_doan_test.csv"
         test_df = pd.read_csv(test_pred_path)
         p, r, thresh = precision_recall_curve(test_df["Machine failure"], test_df["diem_hong"])
         
-        # Downsample PR curve to ~60 evenly spaced recall points for frontend rendering
-        indices = [int(i) for i in np.linspace(0, len(p) - 1, min(60, len(p)))]
-        pr_points = [{"recall": round(float(r[i]), 4), "precision": round(float(p[i]), 4)} for i in indices]
-        # Sort by recall ascending
-        pr_points = sorted(pr_points, key=lambda x: x["recall"])
+        pr_points = []
+        for i in range(len(p)):
+            if i:
+                pr_points.append({"recall": float(r[i]), "precision": float(p[i-1])})
+            pr_points.append({"recall": float(r[i]), "precision": float(p[i])})
 
         # 3. 40 Configurations from so_sanh_40_cau_hinh.csv
         cfg_path = EXP_DIR / "so_sanh_40_cau_hinh.csv"
@@ -167,20 +153,20 @@ def get_test_results():
         return {
             "dataset_info": {
                 "name": "AI4I 2020 Predictive Maintenance (Tập Test độc lập)",
-                "total_test_samples": 1500,
-                "test_failures": 51,
-                "test_normals": 1449,
-                "imbalance_ratio": "3.4% mẫu hỏng (mất cân bằng nghiêm trọng)",
+                "total_test_samples": len(test_df),
+                "test_failures": int(test_df["Machine failure"].sum()),
+                "test_normals": int((test_df["Machine failure"] == 0).sum()),
+                "imbalance_ratio": f"{100 * test_df['Machine failure'].mean():.2f}% mẫu hỏng",
                 "split_ratio": "70% Train / 15% Validation / 15% Test (phân tầng, seed=42)"
             },
-            "winner_model": meta.get("winner", {}),
+            "winner_model": meta["winner"],
             "winner_test": winner_test,
             "winner_val": winner_val,
             "confusion_matrix": {
-                "tn": winner_test.get("tn", 1437),
-                "fp": winner_test.get("fp", 12),
-                "fn": winner_test.get("fn", 12),
-                "tp": winner_test.get("tp", 39)
+                "tn": winner_test["tn"],
+                "fp": winner_test["fp"],
+                "fn": winner_test["fn"],
+                "tp": winner_test["tp"]
             },
             "pr_curve": pr_points,
             "configurations": configs,

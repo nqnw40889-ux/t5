@@ -55,6 +55,12 @@ export async function validateCsv(file: File) {
           if (field === 'Type' && !/^[LMH]$/i.test(value)) {
             throw new Error(`Dòng ${recordLine}: cột Type chỉ nhận L, M hoặc H.`);
           }
+          if (field === 'Tool wear [min]' && parseSensorValue(value) < 0) {
+            throw new Error(`Dòng ${recordLine}: cột ${field}: Độ mòn dao phải từ 0 phút trở lên`);
+          }
+          if (field.includes('temperature') && parseSensorValue(value) <= 0) {
+            throw new Error(`Dòng ${recordLine}: cột ${field}: Nhiệt độ Kelvin phải lớn hơn 0`);
+          }
           if (field !== 'Type' && (value.includes(',') || !Number.isFinite(parseSensorValue(value)))) {
             throw new Error(`Dòng ${recordLine}: cột ${field} phải là số hữu hạn. Dùng dấu chấm cho phần thập phân.`);
           }

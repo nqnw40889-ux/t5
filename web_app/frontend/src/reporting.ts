@@ -6,6 +6,7 @@ export interface HistoryEntry {
   mode: 'manual' | 'csv';
   total: number;
   failures: number;
+  outOfRangeCount?: number;
   score?: number;
   sampleName?: string;
   exactThreshold?: number;

@@ -129,7 +129,7 @@ export const TestResultsPage: React.FC<{ section?: 'validation' | 'missed' }> = 
           <span className="text-2xl sm:text-3xl font-extrabold font-mono text-amber-600 mt-1 block">
             {(winner_test.f1 * 100).toFixed(2)}%
           </span>
-          <span className="text-[11px] text-slate-500 mt-1 block">Cân bằng tối ưu tại ngưỡng 31,54%</span>
+          <span className="text-[11px] text-slate-500 mt-1 block">Kết quả tại ngưỡng đã lưu</span>
         </div>
 
         {/* Average Precision */}
@@ -221,7 +221,7 @@ export const TestResultsPage: React.FC<{ section?: 'validation' | 'missed' }> = 
           <div className="p-3 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-600 flex items-start gap-2">
             <Info className="w-4 h-4 text-teal-600 shrink-0 mt-0.5" />
             <span>
-              Tại ngưỡng <strong>31,54%</strong>, mô hình đạt được sự cân bằng hoàn hảo giữa việc bắt trúng 39/51 ca hỏng (76,47% Recall) và hạn chế báo nhầm chỉ 12 lần trên 1.449 máy bình thường (99,17% độ đặc hiệu).
+              Tại ngưỡng <strong>{(winner_test.threshold * 100).toLocaleString("vi-VN", { maximumFractionDigits: 2 })}%</strong>, mô hình nhận đúng {confusion_matrix.tp} mẫu hỏng, bỏ sót {confusion_matrix.fn} mẫu hỏng và báo nhầm {confusion_matrix.fp} mẫu bình thường trên tập kiểm thử.
             </span>
           </div>
         </div>
@@ -315,7 +315,7 @@ export const TestResultsPage: React.FC<{ section?: 'validation' | 'missed' }> = 
             </span>
             <span className="flex items-center gap-1.5 font-medium">
               <span className="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>
-              Điểm vận hành chọn (Ngưỡng 31,54%)
+              Điểm vận hành tại ngưỡng đã lưu
             </span>
           </div>
         </div>
@@ -329,7 +329,7 @@ export const TestResultsPage: React.FC<{ section?: 'validation' | 'missed' }> = 
               <span>Bảng so sánh 40 cấu hình thực nghiệm</span>
             </h3>
             <p className="text-xs text-slate-500 mt-0.5">
-              Nạp từ <code className="text-teal-700 font-mono bg-slate-100 px-1 py-0.5 rounded">so_sanh_40_cau_hinh.csv</code> • Đánh giá 4 họ mô hình x 3 chiến lược xử lý mất cân bằng
+              Nạp từ <code className="text-teal-700 font-mono bg-slate-100 px-1 py-0.5 rounded">so_sanh_40_cau_hinh.csv</code> • 36 cấu hình chính và 4 cấu hình đối chứng chỉ dùng biến số
             </p>
           </div>
 
@@ -360,7 +360,7 @@ export const TestResultsPage: React.FC<{ section?: 'validation' | 'missed' }> = 
                 <option value="all">Tất cả</option>
                 <option value="baseline">Baseline (Nguyên bản)</option>
                 <option value="class_weight">Class Weight (Trọng số)</option>
-                <option value="smotenc_25">SMOTE-NC (Tạo mẫu 25%)</option>
+                <option value="numeric_baseline">Đối chứng biến số</option><option value="smote_numeric">SMOTE biến số</option><option value="smotenc_25">SMOTENC (thiểu số/đa số = 0,25)</option>
               </select>
             </div>
           </div>
@@ -415,6 +415,7 @@ export const TestResultsPage: React.FC<{ section?: 'validation' | 'missed' }> = 
       </div>
 
       {/* Section: Analysis of 24 Misclassified Test Samples */}
+      <p className="text-sm text-slate-600">sampling_strategy=0.25 là tỷ lệ số mẫu lớp thiểu số trên lớp đa số sau tăng mẫu.</p>
       <div id="missed" tabIndex={-1} className="scroll-mt-24 p-5 sm:p-6 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3">
           <div>

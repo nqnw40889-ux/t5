@@ -20,8 +20,8 @@ const steps = [
 export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onTrySample, onTryWarning, onOpenTest }) => {
   const examples = [
     { label: 'Thử một ca cảnh báo', detail: 'Điền sẵn thông số vào trang Dự đoán', action: onTryWarning },
-    { label: 'Vì sao chọn ngưỡng 31,54%?', detail: 'Xem Precision, Recall và F1 trên Validation', action: () => onOpenTest('validation') },
-    { label: 'Mô hình đã bỏ sót những ca nào?', detail: 'Mở 12 ca bỏ sót trên tập Test', action: () => onOpenTest('missed') },
+    { label: 'Vì sao chọn ngưỡng đã lưu?', detail: 'Xem Precision, Recall và F1 trên Validation', action: () => onOpenTest('validation') },
+    { label: 'Mô hình đã bỏ sót những ca nào?', detail: 'Mở các ca bỏ sót trên tập Test', action: () => onOpenTest('missed') },
   ];
 
   return (

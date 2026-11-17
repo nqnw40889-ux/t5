@@ -42,6 +42,18 @@ const manualSummary = (result: PredictionResult): Omit<HistoryEntry, 'id' | 'tim
 });
 
 export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => {
+  const [trainStats, setTrainStats] = useState<Record<string, { min: number; max: number }> | null>(null);
+  const [metadataError, setMetadataError] = useState('');
+  useEffect(() => {
+    fetch('/api/metadata').then(async response => {
+      if (!response.ok) throw new Error('Không tải được phạm vi Train.');
+      const data = await response.json();
+      if (!sensorFields.every(({ key }) => Number.isFinite(data.train_stats?.[key]?.min) && Number.isFinite(data.train_stats?.[key]?.max))) {
+        throw new Error('Phạm vi Train thiếu trường bắt buộc.');
+      }
+      setTrainStats(data.train_stats);
+    }).catch(error => setMetadataError(error.message));
+  }, []);
   const [tab, setTab] = useState<'manual' | 'csv'>('manual');
 
   // Form Inputs
@@ -62,7 +74,7 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
 
   const [baseline, setBaseline] = useState<PredictionResult | null>(null);
   const [checked, setChecked] = useState(false);
-  const invalidFields = sensorFields.filter(({ key }) => !Number.isFinite(parseSensorValue(inputs[key])));
+  const invalidFields = sensorFields.filter(({ key }) => !Number.isFinite(parseSensorValue(inputs[key])) || parseSensorValue(inputs[key]) < 0 || (key.includes('temperature') && parseSensorValue(inputs[key]) <= 0));
 
   // CSV States
   const [csvFile, setCsvFile] = useState<File | null>(null);
@@ -184,7 +196,7 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
       });
       const data = await readPredictionResponse<CSVBatchResponse>(resp, 'Không thể xử lý tệp CSV. Kiểm tra tệp rồi thử lại.');
       setCsvBatch(data);
-      setCsvReport(onRecord({ mode: 'csv', total: data.total_rows, failures: data.total_failures, exactThreshold: data.exact_threshold, sampleName: csvFile.name }));
+      setCsvReport(onRecord({ mode: 'csv', total: data.total_rows, failures: data.total_failures, outOfRangeCount: data.rows.filter(row => row.has_out_of_range).length, exactThreshold: data.exact_threshold, sampleName: csvFile.name }));
       if (data.rows.length > 0) {
         handleInspectCsvRow(data.rows[0]);
       }
@@ -238,7 +250,7 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
         ...sensorFields.map(({ key }) => r.inputs[key]),
         r.model_score,
         Number(r.is_failure),
-        `Dự đoán: ${r.status_label}`,
+        `Dự đoán: ${r.status_label}${r.has_out_of_range ? " · Kết quả tham khảo ngoài Train" : ""}`,
       ]),
     ], `ket-qua-du-doan-ai4i-${Date.now()}.csv`);
   };
@@ -259,9 +271,10 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
         diem_mo_hinh_phan_tram: `${result.model_score_percent}%`,
         nguong_quyet_dinh: result.exact_threshold,
         nguong_hien_thi: `${result.display_threshold_percent}%`,
-        vung_nguong: result.is_failure ? "Từ ngưỡng trở lên (>= 31.54%)" : "Dưới ngưỡng (< 31.54%)"
+        vung_nguong: result.is_failure ? "Từ ngưỡng đã lưu trở lên" : "Dưới ngưỡng đã lưu"
       },
       top_dong_gop_treeshap: result.top_contributions,
+       ket_qua_tham_khao: result.out_of_range_warnings.length > 0,
       doi_chieu_pham_vi_train: {
         thong_so_ngoai_dai: result.out_of_range_warnings,
         canh_bao_ngoai_dai: result.out_of_range_warnings.length > 0 ? "Kết quả ngoài phạm vi Train không đủ cơ sở kết luận" : "Trong phạm vi Train"
@@ -282,6 +295,7 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
 
   return (
     <div className="space-y-8 pb-16">
+      {metadataError && <p role="alert">{metadataError}</p>}
       {/* Top Header & Mode Switcher */}
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-4">
         <div>
@@ -322,7 +336,7 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
       {sample && tab === 'manual' && !result && sampleName && (
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-teal-200 bg-teal-50 p-4">
           <p className="text-sm text-teal-800"><strong>{sampleName}</strong> đã được điền sẵn.</p>
-          <button form="prediction-form" type="submit" disabled={loading} className="app-button app-button-primary">
+          <button form="prediction-form" type="submit" disabled={loading || !trainStats} className="app-button app-button-primary">
             {loading ? 'Đang dự đoán…' : 'Chạy dự đoán mẫu'}
           </button>
         </div>
@@ -386,11 +400,12 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
               </div>
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                {sensorFields.map(({ key, label, unit, min, max }) => {
+                {sensorFields.map(({ key, label, unit }) => {
+                  const range = trainStats?.[key];
                   const value = inputs[key];
                   const invalid = checked && invalidFields.some(field => field.key === key);
                   const numericValue = parseSensorValue(value);
-                  const outside = Number.isFinite(numericValue) && (numericValue < min || numericValue > max);
+                  const outside = Number.isFinite(numericValue) && (range !== undefined && (numericValue < range.min || numericValue > range.max));
                   const id = key.replace(/[^a-zA-Z]+/g, '-');
                   return (
                     <div key={key}>
@@ -412,10 +427,10 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
                         className={`w-full rounded-lg border bg-slate-50 px-3 py-2 font-mono text-sm text-slate-900 ${invalid ? 'border-red-500' : 'border-slate-300'}`}
                       />
                       <p id={`${id}-hint`} className={`mt-1 text-xs ${outside ? 'font-semibold text-amber-800' : 'text-slate-600'}`} aria-live="polite">
-                        {outside ? 'Ngoài dải huấn luyện' : 'Dải huấn luyện'} {formatNumber.format(min)}–{formatNumber.format(max)} {unit}
+                        {outside ? 'Ngoài dải huấn luyện' : 'Dải huấn luyện'} {range ? formatNumber.format(range.min) + '–' + formatNumber.format(range.max) + ' ' + unit : 'đang tải từ máy chủ'}
                       </p>
                        {invalid && <p id={`${id}-error`} role="alert" className="mt-1 text-xs text-red-800">
-                         {String(value).trim() ? `${label} phải là số hữu hạn.` : `Nhập ${label.toLocaleLowerCase('vi-VN')}.`}
+                         {key === 'Tool wear [min]' && numericValue < 0 ? 'Độ mòn dao phải từ 0 phút trở lên' : key.includes('temperature') && numericValue <= 0 ? 'Nhiệt độ Kelvin phải lớn hơn 0' : numericValue < 0 ? 'Giá trị phải từ 0 trở lên' : String(value).trim() ? `${label} phải là số hữu hạn.` : `Nhập ${label.toLocaleLowerCase('vi-VN')}.`}
                        </p>}
                     </div>
                   );
@@ -433,7 +448,7 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !trainStats}
                 className="w-full py-3.5 rounded-xl bg-teal-600 hover:bg-teal-700 active:scale-95 text-white font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
               >
                 {loading ? (
@@ -502,6 +517,7 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
                   </div>
                 </div>
 
+                {result.out_of_range_warnings.length > 0 && <p role="status" className="text-amber-800">Kết quả tham khảo. Kết quả ngoài phạm vi Train không đủ cơ sở kết luận.</p>}
                 <dl className="watt-kpis">
                   <div>
                     <dt>Điểm mô hình</dt>
@@ -750,7 +766,7 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
                               }`}>
                                 {r.is_failure ? 'Cảnh báo hỏng' : 'Bình thường'}
                               </span>
-                              {r.has_out_of_range && <span className="mt-1 block whitespace-nowrap font-sans text-[11px] font-semibold text-amber-800">Ngoài dải</span>}
+                              {r.has_out_of_range && <span className="mt-1 block whitespace-nowrap font-sans text-[11px] font-semibold text-amber-800">Tham khảo ngoài Train</span>}
                             </td>
                             <td className="p-2.5">
                               <button type="button" aria-label={`Xem chi tiết dòng ${r.row_index}`} aria-pressed={isSel} onClick={() => handleInspectCsvRow(r)}
@@ -798,6 +814,7 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
                       </div>
                     </div>
 
+                    {csvDetail.out_of_range_warnings.length > 0 && <p role="status" className="text-amber-800">Kết quả tham khảo. Kết quả ngoài phạm vi Train không đủ cơ sở kết luận.</p>}
                     {/* Prediction Label */}
                     <div className={`p-3.5 rounded-xl border ${
                       csvDetail.is_failure ? 'bg-red-50 border-red-300 text-red-900' : 'bg-emerald-50 border-emerald-300 text-emerald-900'

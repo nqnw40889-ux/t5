@@ -36,10 +36,44 @@ FEATURE_VN_MAP = {
     "Tool wear [min]": "Độ mòn dao [min]"
 }
 
+def validate_input(values, row=None):
+    prefix = f"Dòng {row}: " if row is not None else ""
+    result = {}
+    for col in ALL_COLUMNS:
+        value = values.get(col)
+        label = FEATURE_VN_MAP[col]
+        if value is None or (isinstance(value, str) and not value.strip()):
+            raise ValueError(f"{prefix}Cột {col}: thiếu {label}")
+        if col == "Type":
+            value = str(value).strip().upper()
+            if value not in ("L", "M", "H"):
+                raise ValueError(f"{prefix}Cột Type chỉ nhận L, M hoặc H")
+        else:
+            try:
+                if isinstance(value, bool):
+                    raise ValueError()
+                value = float(value)
+            except (ValueError, TypeError, OverflowError):
+                raise ValueError(f"{prefix}Cột {col}: {label} phải là số hữu hạn")
+            if not np.isfinite(value):
+                raise ValueError(f"{prefix}Cột {col}: {label} phải là số hữu hạn")
+            if col == "Tool wear [min]" and value < 0:
+                raise ValueError(f"{prefix}Cột {col}: Độ mòn dao phải từ 0 phút trở lên")
+            if "temperature" in col and value <= 0:
+                raise ValueError(f"{prefix}Cột {col}: Nhiệt độ Kelvin phải lớn hơn 0")
+            if col in ("Torque [Nm]", "Rotational speed [rpm]") and value < 0:
+                raise ValueError(f"{prefix}Cột {col}: {label} phải từ 0 trở lên")
+        result[col] = value
+    return result
+
+
 class MaintenancePredictor:
     _instance = None
 
     def __init__(self):
+        for path in (EXP_DIR / "ket_qua.json", EXP_DIR / "pipeline.joblib", SPLIT_DIR / "train.csv"):
+            if not path.is_file():
+                raise ValueError(f"Thiếu tệp bắt buộc: {path.name}")
         # 1. Load exact winner threshold and metadata from ket_qua.json
         meta_path = EXP_DIR / "ket_qua.json"
         self.metadata = json.loads(meta_path.read_text(encoding="utf-8"))
@@ -80,24 +114,9 @@ class MaintenancePredictor:
 
     def predict_single(self, input_dict: dict) -> dict:
         """Run single manual sample inference with exact SHAP, range check and inspection suggestions."""
-        # Validate keys
-        missing = [c for c in ALL_COLUMNS if c not in input_dict]
-        if missing:
-            raise ValueError(f"Thiếu thông số bắt buộc: {', '.join(missing)}")
-            
-        type_val = str(input_dict["Type"]).strip().upper()
-        if type_val not in ["L", "M", "H"]:
-            raise ValueError(f"Loại máy 'Type' chỉ nhận 'L', 'M' hoặc 'H'. Giá trị nhận được: '{type_val}'")
-            
-        data = {
-            "Type": [type_val],
-            "Air temperature [K]": [float(input_dict["Air temperature [K]"])],
-            "Process temperature [K]": [float(input_dict["Process temperature [K]"])],
-            "Rotational speed [rpm]": [float(input_dict["Rotational speed [rpm]"])],
-            "Torque [Nm]": [float(input_dict["Torque [Nm]"])],
-            "Tool wear [min]": [float(input_dict["Tool wear [min]"])]
-        }
-        df = pd.DataFrame(data)
+        values = validate_input(input_dict)
+        type_val = values["Type"]
+        df = pd.DataFrame([values])
 
         # 1. Pipeline model score (diem_hong)
         scores = self.pipeline.predict_proba(df)[:, 1]
@@ -161,13 +180,16 @@ class MaintenancePredictor:
                 "value": item["value"],
                 "contribution": round(shap_val, 4),
                 "abs_contribution": round(abs(shap_val), 4),
-                "direction": "tăng nguy cơ hỏng" if shap_val > 0 else "giảm nguy cơ hỏng",
+                "direction": "tăng điểm mô hình" if shap_val > 0 else "giảm điểm mô hình",
                 "direction_type": "positive" if shap_val > 0 else "negative"
             })
 
         # 4. Gợi ý kiểm tra (1-2 gợi ý đối chiếu số đo / thông số liên quan)
         suggestions = []
-        if is_failure:
+        if out_of_range_warnings:
+            suggestions = ["Kết quả ngoài phạm vi Train không đủ cơ sở kết luận",
+                           "Đối chiếu lại số đo cảm biến và các thông số vượt dải trước khi sử dụng kết quả tham khảo."]
+        elif is_failure:
             speed = float(df["Rotational speed [rpm]"].iloc[0])
             torque = float(df["Torque [Nm]"].iloc[0])
             tool_wear = float(df["Tool wear [min]"].iloc[0])
@@ -191,7 +213,7 @@ class MaintenancePredictor:
                 suggestions.append("Đối chiếu lại số liệu cảm biến với thiết bị đo chuẩn ngoài và kiểm tra rung động tại các gối đỡ trục.")
                 suggestions.append("Theo dõi liên tục chu kỳ tải tiếp theo trước khi vận hành ở tốc độ tối đa.")
         else:
-            suggestions.append("Các thông số vận hành đều nằm trong giới hạn kiểm soát bình thường của mô hình.")
+            suggestions.append("Mô hình dự đoán bình thường tại ngưỡng đã lưu")
             if out_of_range_warnings:
                 suggestions.append("Lưu ý: Có thông số nằm ngoài dải quan sát của tập Train, khuyến nghị kiểm tra lại số đo cảm biến.")
 
@@ -219,9 +241,9 @@ class MaintenancePredictor:
     def predict_csv(self, csv_file_content_or_path) -> dict:
         """Run CSV batch inference using the exact pipeline logic."""
         if isinstance(csv_file_content_or_path, (str, Path)):
-            data = pd.read_csv(csv_file_content_or_path, encoding="utf-8-sig")
+            data = pd.read_csv(csv_file_content_or_path, encoding="utf-8-sig", keep_default_na=False, skip_blank_lines=False)
         else:
-            data = pd.read_csv(csv_file_content_or_path, encoding="utf-8-sig")
+            data = pd.read_csv(csv_file_content_or_path, encoding="utf-8-sig", keep_default_na=False, skip_blank_lines=False)
 
         if data.empty:
             raise ValueError("Tệp CSV rỗng, không chứa dữ liệu mẫu.")
@@ -229,25 +251,12 @@ class MaintenancePredictor:
         # Check required columns
         missing = [col for col in ALL_COLUMNS if col not in data.columns]
         if missing:
-            raise ValueError(f"Tệp CSV thiếu cột bắt buộc: {', '.join(missing)}")
+            raise ValueError(f"Dòng 1: Tệp CSV thiếu cột bắt buộc: {', '.join(missing)}")
 
-        features = data[ALL_COLUMNS].copy()
-        features["Type"] = features["Type"].astype(str).str.strip().str.upper()
-
-        invalid_types = features[~features["Type"].isin(["L", "M", "H"])]
-        if not invalid_types.empty:
-            row_idx = invalid_types.index[0] + 2  # 1-based, +1 for header
-            bad_val = invalid_types["Type"].iloc[0]
-            raise ValueError(f"Dòng {row_idx}: Cột 'Type' chỉ nhận giá trị 'L', 'M' hoặc 'H'. Giá trị lỗi: '{bad_val}'")
-
-        for col in NUMERIC_COLUMNS:
-            try:
-                features[col] = pd.to_numeric(features[col], errors="raise")
-            except Exception as e:
-                raise ValueError(f"Cột '{col}' chứa giá trị không hợp lệ (phải là số): {str(e)}")
-
-        if not np.isfinite(features[NUMERIC_COLUMNS].to_numpy(dtype=float)).all():
-            raise ValueError("Các thông số cảm biến phải là số hữu hạn và không được để trống (NaN/null/inf).")
+        features = pd.DataFrame([
+            validate_input(record, index + 2)
+            for index, record in enumerate(data.to_dict(orient="records"))
+        ], columns=ALL_COLUMNS)
 
         scores = self.pipeline.predict_proba(features)[:, 1]
         du_doan_hong = (scores >= self.exact_threshold).astype(int)

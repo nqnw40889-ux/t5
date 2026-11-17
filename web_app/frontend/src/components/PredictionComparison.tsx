@@ -1,11 +1,11 @@
 import type { PredictionInputs, PredictionResult } from '../types';
 
 export const sensorFields = [
-  { key: 'Air temperature [K]', label: 'Nhiệt độ không khí', unit: 'K', min: 295.3, max: 304.5, step: 0.1 },
-  { key: 'Process temperature [K]', label: 'Nhiệt độ quy trình', unit: 'K', min: 305.7, max: 313.8, step: 0.1 },
-  { key: 'Rotational speed [rpm]', label: 'Tốc độ quay', unit: 'rpm', min: 1168, max: 2886, step: 1 },
-  { key: 'Torque [Nm]', label: 'Mô-men xoắn', unit: 'Nm', min: 3.8, max: 76.6, step: 0.1 },
-  { key: 'Tool wear [min]', label: 'Độ mòn dao', unit: 'min', min: 0, max: 253, step: 1 },
+  { key: 'Air temperature [K]', label: 'Nhiệt độ không khí', unit: 'K', step: 0.1 },
+  { key: 'Process temperature [K]', label: 'Nhiệt độ quy trình', unit: 'K', step: 0.1 },
+  { key: 'Rotational speed [rpm]', label: 'Tốc độ quay', unit: 'rpm', step: 1 },
+  { key: 'Torque [Nm]', label: 'Mô-men xoắn', unit: 'Nm', step: 0.1 },
+  { key: 'Tool wear [min]', label: 'Độ mòn dao', unit: 'min', step: 1 },
 ] as const;
 
 export type PredictionDraft = { Type: PredictionInputs['Type'] } & Record<typeof sensorFields[number]['key'], number | string>;
