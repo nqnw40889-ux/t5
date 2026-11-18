@@ -1,0 +1,9 @@
+﻿thu_tu,ten_sau_bien_doi,thuoc_tinh_goc,gain
+0,numeric_Air_temperature_K,Air temperature [K],1894.6448181122541
+1,numeric_Process_temperature_K,Process temperature [K],1012.1955374330282
+2,numeric_Rotational_speed_rpm,Rotational speed [rpm],3212.283520013094
+3,numeric_Torque_Nm,Torque [Nm],6512.379683919251
+4,numeric_Tool_wear_min,Tool wear [min],3301.059930063784
+5,type_Type_H,Type,18.362178802490234
+6,type_Type_L,Type,123.96508699655533
+7,type_Type_M,Type,50.152094662189484

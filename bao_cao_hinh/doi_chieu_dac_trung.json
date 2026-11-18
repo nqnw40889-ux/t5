@@ -1,0 +1,60 @@
+{
+  "pipeline": "ket_qua/thuc_nghiem/pipeline.joblib",
+  "pipeline_sha256": "067de32bbdb2c2c95e2fa9781080a5d682bf84b9cc707cf6dcae4029f4f48a3e",
+  "importance_type": "gain",
+  "prepare_features": [
+    "Air temperature [K]",
+    "Process temperature [K]",
+    "Rotational speed [rpm]",
+    "Torque [Nm]",
+    "Tool wear [min]",
+    "Type"
+  ],
+  "encoded_features": [
+    "numeric_Air_temperature_K",
+    "numeric_Process_temperature_K",
+    "numeric_Rotational_speed_rpm",
+    "numeric_Torque_Nm",
+    "numeric_Tool_wear_min",
+    "type_Type_H",
+    "type_Type_L",
+    "type_Type_M"
+  ],
+  "model_features": [
+    "numeric_Air_temperature_K",
+    "numeric_Process_temperature_K",
+    "numeric_Rotational_speed_rpm",
+    "numeric_Torque_Nm",
+    "numeric_Tool_wear_min",
+    "type_Type_H",
+    "type_Type_L",
+    "type_Type_M"
+  ],
+  "booster_features": [
+    "numeric_Air_temperature_K",
+    "numeric_Process_temperature_K",
+    "numeric_Rotational_speed_rpm",
+    "numeric_Torque_Nm",
+    "numeric_Tool_wear_min",
+    "type_Type_H",
+    "type_Type_L",
+    "type_Type_M"
+  ],
+  "original_columns_by_encoded_index": [
+    "Air temperature [K]",
+    "Process temperature [K]",
+    "Rotational speed [rpm]",
+    "Torque [Nm]",
+    "Tool wear [min]",
+    "Type",
+    "Type",
+    "Type"
+  ],
+  "type_categories": [
+    "H",
+    "L",
+    "M"
+  ],
+  "total_gain": 16125.042850002646,
+  "total_percent": 100.0
+}
