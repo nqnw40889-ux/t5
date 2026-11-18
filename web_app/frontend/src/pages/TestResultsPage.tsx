@@ -25,7 +25,7 @@ export const TestResultsPage: React.FC<{ section?: 'validation' | 'missed' }> = 
   const [activeCase, setActiveCase] = useState<MisclassificationItem | null>(null);
 
   // Image Modal / Toggle
-  const [showFigure, setShowFigure] = useState<'none' | 'cm' | 'pr'>('none');
+  const [showFigure, setShowFigure] = useState<'none' | 'pr'>('none');
 
   useEffect(() => {
     fetch('/api/test-results')
@@ -153,75 +153,35 @@ export const TestResultsPage: React.FC<{ section?: 'validation' | 'missed' }> = 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Confusion Matrix (Left) */}
         <div className="lg:col-span-6 min-w-0 p-5 sm:p-6 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
                 <span>Ma trận nhầm lẫn trên Test</span>
               </h3>
-              <p className="text-xs text-slate-500 mt-0.5">Tổng 1.500 mẫu kiểm tra độc lập</p>
+              <p className="text-xs text-slate-500 mt-0.5">Tập Test đã lưu ({data.dataset_info.total_test_samples.toLocaleString("vi-VN")} mẫu)</p>
             </div>
 
-            <button
-              onClick={() => setShowFigure(showFigure === 'cm' ? 'none' : 'cm')}
-              className="flex items-center gap-1.5 text-xs text-slate-700 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg border border-slate-300 font-semibold transition-colors"
+            <a
+              href="/figures/ma_tran_nham_lan_test_moi.png"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex shrink-0 items-center gap-1.5 text-xs text-slate-700 bg-slate-100 hover:bg-slate-200 px-3 py-2.5 rounded-lg border border-slate-300 font-semibold transition-colors"
+              aria-label="Mở ảnh ma trận nhầm lẫn đầy đủ trong thẻ mới"
             >
-              <ImageIcon className="w-3.5 h-3.5 text-teal-600" />
-              <span>{showFigure === 'cm' ? 'Đóng ảnh gốc' : 'Xem ảnh gốc matplotlib'}</span>
-            </button>
+              <ImageIcon className="w-3.5 h-3.5 text-teal-600" aria-hidden="true" />
+              <span>Mở ảnh đầy đủ</span>
+            </a>
           </div>
 
-          {showFigure === 'cm' ? (
-            <div className="p-2 bg-slate-50 rounded-xl border border-slate-200 flex justify-center">
-              <img src="/api/figures/confusion-matrix" alt="Ma trận nhầm lẫn" className="max-h-64 object-contain rounded" />
-            </div>
-          ) : (
-            /* Interactive Matrix Grid */
-            <div className="grid grid-cols-2 gap-3 pt-2">
-              {/* True Negative */}
-              <div className="p-4 rounded-xl border border-emerald-200 bg-emerald-50/70 text-center">
-                <span className="text-[11px] uppercase tracking-wider text-emerald-800 font-bold block">
-                  Đúng bình thường (TN)
-                </span>
-                <span className="text-3xl font-extrabold font-mono text-emerald-900 mt-1 block">
-                  {confusion_matrix.tn.toLocaleString()}
-                </span>
-                <span className="text-[11px] text-slate-600 mt-1 block">Thật: 0 • Đoán: 0</span>
-              </div>
-
-              {/* False Positive */}
-              <div className="p-4 rounded-xl border border-amber-200 bg-amber-50/70 text-center">
-                <span className="text-[11px] uppercase tracking-wider text-amber-800 font-bold block">
-                  Báo nhầm (FP)
-                </span>
-                <span className="text-3xl font-extrabold font-mono text-amber-800 mt-1 block">
-                  {confusion_matrix.fp}
-                </span>
-                <span className="text-[11px] text-slate-600 mt-1 block">Thật: 0 • Đoán: 1 (Hỏng)</span>
-              </div>
-
-              {/* False Negative */}
-              <div className="p-4 rounded-xl border border-red-200 bg-red-50/70 text-center">
-                <span className="text-[11px] uppercase tracking-wider text-red-800 font-bold block">
-                  Bỏ sót sự cố (FN)
-                </span>
-                <span className="text-3xl font-extrabold font-mono text-red-800 mt-1 block">
-                  {confusion_matrix.fn}
-                </span>
-                <span className="text-[11px] text-slate-600 mt-1 block">Thật: 1 (Hỏng) • Đoán: 0</span>
-              </div>
-
-              {/* True Positive */}
-              <div className="p-4 rounded-xl border border-teal-200 bg-teal-50/70 text-center">
-                <span className="text-[11px] uppercase tracking-wider text-teal-800 font-bold block">
-                  Đúng ca hỏng (TP)
-                </span>
-                <span className="text-3xl font-extrabold font-mono text-teal-900 mt-1 block">
-                  {confusion_matrix.tp}
-                </span>
-                <span className="text-[11px] text-slate-600 mt-1 block">Thật: 1 • Đoán: 1 (Hỏng)</span>
-              </div>
-            </div>
-          )}
+          <figure className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+            <img
+              src="/figures/ma_tran_nham_lan_test_moi.png"
+              alt={`Ma trận nhầm lẫn tập Test: TN ${confusion_matrix.tn}, FP ${confusion_matrix.fp}, FN ${confusion_matrix.fn}, TP ${confusion_matrix.tp}. Trục ngang là nhãn dự đoán, trục dọc là nhãn thực tế.`}
+              width={3960}
+              height={2952}
+              className="block h-auto w-full max-w-full"
+            />
+          </figure>
 
           <div className="p-3 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-600 flex items-start gap-2">
             <Info className="w-4 h-4 text-teal-600 shrink-0 mt-0.5" />

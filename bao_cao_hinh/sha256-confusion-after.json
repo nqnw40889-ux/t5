@@ -1,0 +1,16 @@
+{
+  "data/ai4i2020.csv": "dc6630cd9b1f0f853922fad78a1b6436570d3f1ec863f1dd5c4340ac56bc8a8e",
+  "ket_qua/du_lieu/audit.json": "0dadce65bd2d7aa8378dcbbc2124d947ce97c01d1b428457f313bc23c38b257c",
+  "ket_qua/du_lieu/splits.csv": "d93d9b1d8491386a7f3c88388c760257b848d90b28a7806602eeadbefb22fae8",
+  "ket_qua/du_lieu/test.csv": "317e8a39ecdaf9b4e83e3aeaf2edeff10314303d41c89996a51a3c41244446c7",
+  "ket_qua/du_lieu/train.csv": "4bbb4b230cb0edc21d8d8d0dc311b6258675cfb444072271afecfcbeac1a291e",
+  "ket_qua/du_lieu/validation.csv": "0af701a9720cb19452e85197b7d2bfb7e48ff791766f113103db149da06359c5",
+  "ket_qua/thuc_nghiem/du_doan_sai.csv": "150c110abac31402f670434c12a99646bbaf32d1272e49521022d090c2166585",
+  "ket_qua/thuc_nghiem/du_doan_test.csv": "953461d3d46168d81f6260504033efe28af57cf7a15eaa42763ae8c0d0a3fd03",
+  "ket_qua/thuc_nghiem/ket_qua.json": "7338f8a144095b47ccf8debf7044d72c90935e898f25160126c516451a9b408c",
+  "ket_qua/thuc_nghiem/ma_tran_nham_lan.png": "8bf4433d4f43de7c166efd01103e739ab16acfe335eb96557de04af6ea295f05",
+  "ket_qua/thuc_nghiem/pipeline.joblib": "067de32bbdb2c2c95e2fa9781080a5d682bf84b9cc707cf6dcae4029f4f48a3e",
+  "ket_qua/thuc_nghiem/precision_recall_test.png": "d46587de04dca738c0ea1ad121091a99e3a52aac7e7a54bc6fea47845b217336",
+  "ket_qua/thuc_nghiem/quet_nguong_validation.csv": "ebb73a552e69cb85de5f4b6b46ec7c046db887870300492c1b2ce5337403f7a7",
+  "ket_qua/thuc_nghiem/so_sanh_40_cau_hinh.csv": "82aa79a22e7965de4940dffbe8aec3077b06746c467ff98dbd946cb4410cd6a8"
+}

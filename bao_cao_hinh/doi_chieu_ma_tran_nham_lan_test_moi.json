@@ -1,0 +1,25 @@
+{
+  "source_json": "ket_qua/thuc_nghiem/ket_qua.json",
+  "source_csv": "ket_qua/thuc_nghiem/du_doan_test.csv",
+  "winner_test": {
+    "threshold": 0.31537755439431603,
+    "ap": 0.7899659524388329,
+    "precision": 0.7647058823529411,
+    "recall": 0.7647058823529411,
+    "f1": 0.7647058823529411,
+    "tn": 1437,
+    "fp": 12,
+    "fn": 12,
+    "tp": 39
+  },
+  "csv_counts": {
+    "tn": 1437,
+    "fp": 12,
+    "fn": 12,
+    "tp": 39
+  },
+  "N": 1500,
+  "threshold_full_precision": 0.31537755439431603,
+  "threshold_display_percent": "31,54",
+  "score_label_mismatches": 0
+}
