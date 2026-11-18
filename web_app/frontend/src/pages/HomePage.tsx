@@ -19,6 +19,7 @@ const steps = [
 
 export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onTrySample, onTryWarning, onOpenTest }) => {
   const examples = [
+    { label: 'Thử mẫu có sẵn', detail: 'Điền sẵn sáu thông số vận hành', action: onTrySample },
     { label: 'Thử một ca cảnh báo', detail: 'Điền sẵn thông số vào trang Dự đoán', action: onTryWarning },
     { label: 'Vì sao chọn ngưỡng đã lưu?', detail: 'Xem Precision, Recall và F1 trên Validation', action: () => onOpenTest('validation') },
     { label: 'Mô hình đã bỏ sót những ca nào?', detail: 'Mở các ca bỏ sót trên tập Test', action: () => onOpenTest('missed') },
@@ -31,12 +32,12 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onTrySample, onT
           <div className="ai4i-hero-copy">
             <p className="ai4i-project">AI4I 2020 <span aria-hidden="true">/</span> Nhóm 16</p>
             <h1 id="home-title">Dự đoán hỏng hóc máy phục vụ bảo trì dự đoán <span>trên dữ liệu cảm biến mất cân bằng</span></h1>
-            <p className="ai4i-intro">Nhập thông số vận hành để xem điểm LightGBM, cảnh báo hỏng thiết bị và các yếu tố ảnh hưởng đến dự đoán.</p>
+            <p className="ai4i-intro">Đối chiếu thông số vận hành với điểm LightGBM và các yếu tố ảnh hưởng.</p>
             <div className="ai4i-actions">
               <button type="button" className="ai4i-button ai4i-button-primary" onClick={() => onNavigate('predict')}>
-                Nhập thông số máy <ArrowUpRight size={17} aria-hidden="true" />
+                Bắt đầu dự đoán <ArrowUpRight size={17} aria-hidden="true" />
               </button>
-              <button type="button" className="ai4i-button" onClick={onTrySample}>Thử mẫu có sẵn</button>
+              <button type="button" className="ai4i-button" onClick={() => onNavigate('test')}>Xem kết quả kiểm thử</button>
             </div>
           </div>
 

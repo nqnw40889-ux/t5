@@ -42,10 +42,7 @@ export function MethodologyPage() {
       <p>{data.missing_cells} ô thiếu theo isna(). {data.duplicate_rows} bản ghi trùng trên toàn bộ các cột, tính từ lần xuất hiện thứ hai. {data.duplicate_udi ?? 'Chưa có dữ liệu'} mã UDI bị lặp.</p>
       <p>Kiểm tra thiếu và trùng chỉ phản ánh hai tiêu chí này. Dải quan sát trong Train không phải giới hạn vận hành an toàn.</p>
     </section>
-    <section className="method-panel">
-      <h2>Lựa chọn thuộc tính</h2>
-      <div className="overflow-x-auto"><table className="method-table"><thead><tr>{['Tên cột', 'Vai trò', 'Giữ / bỏ', 'Lý do'].map(x => <th key={x} scope="col">{x}</th>)}</tr></thead><tbody>{data.columns.map(c => <tr key={c.column}><th scope="row">{c.column}</th><td>{c.role}</td><td>{c.decision}</td><td>{c.reason}</td></tr>)}</tbody></table></div>
-    </section>
+
     <section className="method-panel">
       <h2>Phân bố lớp</h2>
       <label>Tập dữ liệu <select aria-label="Tập dữ liệu" value={split} onChange={e => setSplit(e.target.value)}>{Object.entries(names).map(([key, name]) => <option key={key} value={key}>{name}</option>)}</select></label>
@@ -66,12 +63,19 @@ export function MethodologyPage() {
     <section className="method-panel space-y-3">
       <h2>Tiền xử lý trong pipeline đã lưu</h2>
       <p>Type được one-hot theo thứ tự {data.type_categories.join(', ')}. Năm biến số giữ nguyên trong pipeline cuối. Sau biến đổi có {data.encoded_features.length} đặc trưng.</p>
-      <details><summary>Thứ tự đặc trưng sau biến đổi</summary><ol className="list-decimal pl-6">{data.encoded_features.map(name => <li key={name} className="break-all">{name}</li>)}</ol></details>
+
       <h2>Thực nghiệm và lựa chọn mô hình</h2>
       <p>36 cấu hình chính thử baseline, trọng số lớp và SMOTENC. Bốn đối chứng chỉ dùng biến số thử numeric_baseline và smote_numeric. SMOTENC xử lý cả biến số và Type, SMOTE ở đối chứng chỉ dùng biến số. sampling_strategy=0.25 là tỷ lệ số mẫu thiểu số trên đa số sau tăng mẫu.</p>
+      <p>Mô hình cuối dùng {data.winner.model} theo chiến lược {data.winner.method}. Lựa chọn dựa trên CV AP, Validation AP và Gap Train–CV; ngưỡng lấy từ F1 trên Validation.</p>
+      <details><summary>Chi tiết tiền xử lý và tiêu chí lựa chọn</summary>
       <p>Trọng số lớp tăng trọng số mẫu hỏng lên 5. Logistic Regression và các cấu hình SMOTENC chuẩn hóa biến số trong từng pipeline huấn luyện. Mô hình cuối là {data.winner.model}, Profile {data.winner.profile}, chiến lược {data.winner.method}, bộ tăng mẫu {data.sampler === 'passthrough' ? 'không tăng mẫu' : data.sampler}.</p>
       <p>Theo mã thực nghiệm, lọc cấu hình có CV AP và Validation AP cách mức cao nhất tương ứng không quá 0,03. Trong nhóm đạt, ưu tiên Gap Train–CV nhỏ hơn, sau đó độ lệch chuẩn CV nhỏ hơn, rồi Validation F1 cao hơn. Train AP là trung bình AP trên phần huấn luyện của sáu lượt kiểm định chéo (3 fold × 2 lần).</p>
       <p>Ngưỡng được chọn theo F1 cao nhất trên Validation. Khi hòa, ưu tiên Recall rồi ngưỡng cao hơn. Test được dùng để đánh giá sau lựa chọn. TreeSHAP giải thích đóng góp lên điểm mô hình, không xác định nguyên nhân hoặc bộ phận hỏng.</p>
+      <details><summary>Thứ tự đặc trưng sau biến đổi</summary><ol className="list-decimal pl-6">{data.encoded_features.map(name => <li key={name} className="break-all">{name}</li>)}</ol></details>      </details>
     </section>
+    <details className="method-panel">
+      <summary>Xem đầy đủ {data.columns.length} cột và lý do giữ / bỏ</summary>
+      <div className="overflow-x-auto"><table className="method-table"><thead><tr>{['Tên cột', 'Vai trò', 'Giữ / bỏ', 'Lý do'].map(x => <th key={x} scope="col">{x}</th>)}</tr></thead><tbody>{data.columns.map(c => <tr key={c.column}><th scope="row">{c.column}</th><td>{c.role}</td><td>{c.decision}</td><td>{c.reason}</td></tr>)}</tbody></table></div>
+    </details>
   </div>;
 }

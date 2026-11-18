@@ -96,7 +96,7 @@ export const TestResultsPage: React.FC<{ section?: 'validation' | 'missed' }> = 
       <div className="border-b border-slate-200 pb-5">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 text-teal-800 text-xs font-mono font-medium mb-2 border border-teal-200">
           <Database className="w-3.5 h-3.5" />
-          <span>Tập Test độc lập đã lưu (1.500 mẫu • 51 ca hỏng • Tỷ lệ 3,4%)</span>
+          <span>Tập Test đã lưu ({data.dataset_info.total_test_samples.toLocaleString("vi-VN")} mẫu)</span>
         </div>
         <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
           Kết quả kiểm định & Đánh giá mô hình
@@ -116,7 +116,7 @@ export const TestResultsPage: React.FC<{ section?: 'validation' | 'missed' }> = 
           <span className="text-2xl sm:text-3xl font-extrabold font-mono text-teal-600 mt-1 block">
             {(winner_test.precision * 100).toFixed(2)}%
           </span>
-          <span className="text-[11px] text-slate-500 mt-1 block">39 đúng hỏng / 51 ca dự báo</span>
+          <span className="text-[11px] text-slate-500 mt-1 block">{confusion_matrix.tp} đúng hỏng / {confusion_matrix.tp + confusion_matrix.fp} mẫu dự báo hỏng</span>
         </div>
 
         {/* Recall */}
@@ -125,7 +125,7 @@ export const TestResultsPage: React.FC<{ section?: 'validation' | 'missed' }> = 
           <span className="text-2xl sm:text-3xl font-extrabold font-mono text-sky-600 mt-1 block">
             {(winner_test.recall * 100).toFixed(2)}%
           </span>
-          <span className="text-[11px] text-slate-500 mt-1 block">39 phát hiện / 51 ca hỏng thật</span>
+          <span className="text-[11px] text-slate-500 mt-1 block">{confusion_matrix.tp} phát hiện / {confusion_matrix.tp + confusion_matrix.fn} mẫu hỏng thật</span>
         </div>
 
         {/* F1-Score */}
@@ -143,16 +143,16 @@ export const TestResultsPage: React.FC<{ section?: 'validation' | 'missed' }> = 
           <span className="text-2xl sm:text-3xl font-extrabold font-mono text-indigo-600 mt-1 block">
             {winner_test.ap.toFixed(4)}
           </span>
-          <span className="text-[11px] text-slate-500 mt-1 block">Cao hơn 23x so với tỷ lệ ngẫu nhiên 0.034</span>
+          <span className="text-[11px] text-slate-500 mt-1 block">AP trên tập Test đã lưu</span>
         </div>
       </div>
 
-      <div id="validation" tabIndex={-1} className="scroll-mt-24"><ValidationThresholdChart /></div>
+
 
       {/* Confusion Matrix and PR Curve Section */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Confusion Matrix (Left) */}
-        <div className="lg:col-span-4 p-5 sm:p-6 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-4">
+        <div className="lg:col-span-6 min-w-0 p-5 sm:p-6 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
@@ -232,7 +232,7 @@ export const TestResultsPage: React.FC<{ section?: 'validation' | 'missed' }> = 
         </div>
 
         {/* Precision-Recall Curve (Right) */}
-        <div className="lg:col-span-8 p-5 sm:p-6 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-4">
+        <div className="lg:col-span-6 min-w-0 p-5 sm:p-6 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
@@ -326,7 +326,7 @@ export const TestResultsPage: React.FC<{ section?: 'validation' | 'missed' }> = 
         </div>
       </div>
 
-      <TrainValidationChart configurations={configurations} />
+      <div id="validation" tabIndex={-1} className="scroll-mt-24"><ValidationThresholdChart /></div>
       {/* Section: Comparison of 40 Experimental Configurations */}
       <div className="p-5 sm:p-6 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3">
@@ -343,7 +343,7 @@ export const TestResultsPage: React.FC<{ section?: 'validation' | 'missed' }> = 
           <div className="flex flex-wrap items-center gap-2 text-xs">
             <div className="flex items-center gap-1 bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-200">
               <span className="text-slate-500 font-medium">Mô hình:</span>
-              <select
+              <select aria-label="Họ mô hình"
                 value={modelFilter}
                 onChange={(e) => setModelFilter(e.target.value)}
                 className="bg-transparent text-slate-800 font-semibold focus:outline-none"
@@ -358,7 +358,7 @@ export const TestResultsPage: React.FC<{ section?: 'validation' | 'missed' }> = 
 
             <div className="flex items-center gap-1 bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-200">
               <span className="text-slate-500 font-medium">Chiến lược:</span>
-              <select
+              <select aria-label="Chiến lược"
                 value={methodFilter}
                 onChange={(e) => setMethodFilter(e.target.value)}
                 className="bg-transparent text-slate-800 font-semibold focus:outline-none"
@@ -375,6 +375,7 @@ export const TestResultsPage: React.FC<{ section?: 'validation' | 'missed' }> = 
         <p className="text-sm text-slate-600">Bản thu gọn hiển thị cấu hình được chọn nếu khớp bộ lọc và tối đa 4 cấu hình còn lại có Validation AP cao nhất trong bộ lọc. Cột Gap gốc = Train AP − CV AP.</p>
         <button type="button" className="app-button" aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>{expanded ? 'Thu gọn' : 'Xem toàn bộ 40 cấu hình'}</button>
         <p role="status">{shownConfigs.length} / {filteredConfigs.length} cấu hình phù hợp</p>
+        <TrainValidationChart configurations={shownConfigs} />
         {/* Table of 40 Configs */}
         <div className="overflow-x-auto max-h-80 border border-slate-200 rounded-xl">
           <table className="w-full text-left text-xs font-mono">

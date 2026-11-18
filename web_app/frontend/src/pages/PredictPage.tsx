@@ -1,3 +1,4 @@
+import { PredictionPanel } from '../components/PredictionPanel';
 import { TestSamplePicker, type TestSample } from '../components/TestSamplePicker';
 import React, { useState, useRef, useEffect } from 'react';
 import { 
@@ -5,14 +6,10 @@ import {
   FileText, Database, HelpCircle, ChevronRight, ArrowDownToLine, Info, RotateCcw
 } from 'lucide-react';
 import { PredictionInputs, PredictionResult, CSVBatchResponse, CSVRowResult } from '../types';
-import { PredictionComparison, sensorFields, formatNumber, type PredictionDraft } from '../components/PredictionComparison';
+import { sensorFields, formatNumber, type PredictionDraft } from '../components/PredictionComparison';
 import { downloadCsv, downloadFile, type HistoryEntry } from '../reporting';
 import { parseSensorValue, predictionError, readPredictionResponse, validateCsv } from '../predictionRequest';
 import { Machine3DViewer } from '../components/Machine3DViewer';
-import { ThresholdBar } from '../components/ThresholdBar';
-import { RangeBar } from '../components/RangeBar';
-import { ShapWaterfall } from '../components/ShapWaterfall';
-import { InspectionSuggestions } from '../components/InspectionSuggestions';
 
 const normalPreset: PredictionInputs = {
     Type: 'L',
@@ -57,9 +54,11 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
   }, []);
   const [tab, setTab] = useState<'manual' | 'csv' | 'test'>('manual');
 
+  const requestRevision = useRef(0);
   const [selectedTest, setSelectedTest] = useState<TestSample>();
   const [testEdited, setTestEdited] = useState(false);
   const chooseTest = (sample: TestSample) => {
+    requestRevision.current += 1;
     setSelectedTest(sample);
     setTestEdited(false);
     setInputs(sample.inputs);
@@ -69,6 +68,7 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
     setSampleName('Mẫu Test UDI ' + sample.id);
   };
   const markEdited = () => {
+    requestRevision.current += 1;
     if (selectedTest) {
       setTestEdited(true);
       setResult(previous => {
@@ -103,6 +103,7 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
   const [csvLoading, setCsvLoading] = useState<boolean>(false);
   const [csvError, setCsvError] = useState<string | null>(null);
   const [csvBatch, setCsvBatch] = useState<CSVBatchResponse | null>(null);
+  const [batchFile, setBatchFile] = useState<File | null>(null);
   const [csvReport, setCsvReport] = useState<HistoryEntry | null>(null);
   const [csvFilter, setCsvFilter] = useState<'all' | 'failure' | 'normal'>('all');
   const [priorityOnly, setPriorityOnly] = useState(false);
@@ -144,9 +145,10 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
     setChecked(true);
     setErrorMsg(null);
     if (invalidFields.length > 0) {
-      document.getElementById(invalidFields[0].key.replace(/[^a-zA-Z]+/g, '-'))?.focus();
+      setErrorMsg("Kiểm tra các ô nhập được đánh dấu bên dưới.");
       return;
     }
+    const revision = requestRevision.current;
     const payload = { ...inputs };
     sensorFields.forEach(({ key }) => { payload[key] = parseSensorValue(inputs[key]); });
     setLoading(true);
@@ -159,11 +161,12 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
         signal: AbortSignal.timeout(30000),
       });
       const data = await readPredictionResponse<PredictionResult>(resp, 'Máy chủ không thể hoàn tất lượt dự đoán. Hãy thử lại.');
+      if (revision !== requestRevision.current) return;
       setResult(data);
       setManualReport(onRecord({ ...manualSummary(data), sampleName }));
 
     } catch (error) {
-      setErrorMsg(predictionError(error, 'Không thể dự đoán. Hãy thử lại.'));
+      if (revision === requestRevision.current) setErrorMsg(predictionError(error, 'Không thể dự đoán. Hãy thử lại.'));
     } finally {
       setLoading(false);
     }
@@ -200,6 +203,7 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
       });
       const data = await readPredictionResponse<CSVBatchResponse>(resp, 'Không thể xử lý tệp CSV. Kiểm tra tệp rồi thử lại.');
       setCsvBatch(data);
+      setBatchFile(csvFile);
       setCsvReport(onRecord({ mode: 'csv', total: data.total_rows, failures: data.total_failures, outOfRangeCount: data.rows.filter(row => row.has_out_of_range).length, exactThreshold: data.exact_threshold, sampleName: csvFile.name }));
       if (data.rows.length > 0) {
         handleInspectCsvRow(data.rows[0]);
@@ -297,6 +301,33 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
 
   if (priorityOnly || csvFilter === 'failure') filteredCsvRows.sort((a, b) => Number(b.is_failure) - Number(a.is_failure) || b.model_score - a.model_score);
 
+  const stale = Boolean(result && (inputs.Type !== result.inputs.Type || sensorFields.some(({ key }) => parseSensorValue(inputs[key]) !== result.inputs[key])));
+  const modeControls = (<fieldset disabled={loading || csvLoading} className="mode-controls"><div className="flex p-1 rounded-xl bg-slate-200/80 border border-slate-300">
+          <button
+            onClick={() => setTab('manual')}
+            className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all ${
+              tab === 'manual'
+                ? 'bg-teal-600 text-white shadow-sm'
+                : 'text-slate-700 hover:text-slate-900'
+            }`}
+          >
+            Nhập tay
+          </button>
+          <button type="button" className="app-button" aria-pressed={tab === 'test'} onClick={() => setTab('test')}>Mẫu Test</button>
+          <button
+            onClick={() => setTab('csv')}
+            className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all flex items-center gap-1.5 ${
+              tab === 'csv'
+                ? 'bg-teal-600 text-white shadow-sm'
+                : 'text-slate-700 hover:text-slate-900'
+            }`}
+          >
+            <Upload className="w-3.5 h-3.5" />
+            <span>Tải tệp CSV</span>
+          </button>
+        </div></fieldset>);
+  const viewResult = () => resultRef.current?.scrollIntoView({ block: 'start', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+
   return (
     <div className="space-y-8 pb-16">
       {metadataError && <p role="alert">{metadataError}</p>}
@@ -311,34 +342,10 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
           </p>
         </div>
 
-        {/* Tab Controls */}
-        <div className="flex p-1 rounded-xl bg-slate-200/80 border border-slate-300">
-          <button
-            onClick={() => setTab('manual')}
-            className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all ${
-              tab === 'manual'
-                ? 'bg-teal-600 text-white shadow-sm'
-                : 'text-slate-700 hover:text-slate-900'
-            }`}
-          >
-            Nhập tay (6 thông số)
-          </button>
-          <button type="button" className="app-button" aria-pressed={tab === 'test'} onClick={() => setTab('test')}>Mẫu Test</button>
-          <button
-            onClick={() => setTab('csv')}
-            className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all flex items-center gap-1.5 ${
-              tab === 'csv'
-                ? 'bg-teal-600 text-white shadow-sm'
-                : 'text-slate-700 hover:text-slate-900'
-            }`}
-          >
-            <Upload className="w-3.5 h-3.5" />
-            <span>Tải tệp CSV</span>
-          </button>
-        </div>
+
       </div>
 
-      {sample && tab === 'manual' && !result && sampleName && (
+      {sample && tab === 'manual' && sampleName && (
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-teal-200 bg-teal-50 p-4">
           <p className="text-sm text-teal-800"><strong>{sampleName}</strong> đã được điền sẵn.</p>
           <button form="prediction-form" type="submit" disabled={loading || !trainStats} className="app-button app-button-primary">
@@ -346,13 +353,16 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
           </button>
         </div>
       )}
-      {tab === 'test' && <><TestSamplePicker disabled={loading} onSelect={chooseTest} />{selectedTest && <p role="status">{testEdited ? 'Mẫu đã chỉnh sửa' : 'Đã nạp mẫu Test UDI ' + selectedTest.id}</p>}</>}
+
+      {tab === 'csv' && modeControls}
       {/* Main Content Area */}
       {tab !== 'csv' ? (
         /* ================= MANUAL INPUT MODE ================= */
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Left Column: Input Form (Desktop: 5 cols) */}
           <div className={`p-5 sm:p-6 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-5 lg:col-span-5`}>
+            {modeControls}
+      {tab === 'test' && <><TestSamplePicker disabled={loading} onSelect={chooseTest} />{selectedTest && <p role="status">{testEdited ? 'Mẫu đã chỉnh sửa' : 'Đã nạp mẫu Test UDI ' + selectedTest.id}</p>}</>}
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
               <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
                 6 Thông số đầu vào
@@ -363,21 +373,21 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
                 <span className="text-[11px] text-slate-500 hidden sm:inline mr-1">Mẫu thử:</span>
                 <button
                   type="button"
-                  onClick={() => applyPreset('normal')}
+                  disabled={loading} onClick={() => applyPreset('normal')}
                   className="text-[11px] px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-300 hover:bg-emerald-100 font-medium transition-colors"
                 >
                   Bình thường
                 </button>
                 <button
                   type="button"
-                  onClick={() => applyPreset('failure')}
+                  disabled={loading} onClick={() => applyPreset('failure')}
                   className="text-[11px] px-2 py-0.5 rounded bg-red-50 text-red-800 border border-red-300 hover:bg-red-100 font-medium transition-colors"
                 >
                   Cảnh báo
                 </button>
                 <button
                   type="button"
-                  onClick={() => applyPreset('out_of_range')}
+                  disabled={loading} onClick={() => applyPreset('out_of_range')}
                   className="text-[11px] px-2 py-0.5 rounded bg-amber-50 text-amber-900 border border-amber-300 hover:bg-amber-100 font-medium transition-colors"
                 >
                   Ngoài dải
@@ -391,7 +401,7 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
                 <label htmlFor="product-type" className="block text-xs font-bold text-slate-700 mb-1">
                   1. Mức chất lượng sản phẩm (Type)
                 </label>
-                <select id="product-type" name="Type"
+                <select disabled={loading} id="product-type" name="Type"
                   value={inputs.Type}
                    onChange={e => {
                      markEdited();
@@ -418,6 +428,7 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
                     <div key={key}>
                       <label htmlFor={id} className="mb-1 block text-xs font-bold text-slate-700">{label} ({unit})</label>
                       <input
+                        disabled={loading}
                         id={id}
                         name={key}
                          type="text"
@@ -472,10 +483,11 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
                 )}
               </button>
             </form>
+            <button type="button" className="app-button mobile-result-link" onClick={viewResult}>Xem kết quả</button>
           </div>
 
           {/* Right Column: Result Panel or Standby Preview (Desktop: 7 cols) */}
-          <div className="min-w-0 lg:col-span-7">
+          <div ref={resultRef} id="prediction-result" className="prediction-result min-w-0 lg:col-span-7">
             {!result ? (
               /* Standby Placeholder when no prediction has been made yet */
               <div className="p-6 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-4">
@@ -494,110 +506,15 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
                 <div className="text-center pt-2">
                   <h3 className="text-sm font-bold text-slate-800">Sẵn sàng nhận dữ liệu dự đoán</h3>
                   <p className="text-xs text-slate-500 mt-1 max-w-md mx-auto">
-                    Điền 6 thông số hoặc bấm thử các nút mẫu có sẵn, sau đó bấm <strong>“Dự đoán tình trạng máy”</strong>. Bảng kết quả sẽ tự động mở và cập nhật đèn trạng thái.
+                    Điền 6 thông số hoặc bấm thử các nút mẫu có sẵn, sau đó bấm <strong>“Dự đoán tình trạng máy”</strong>. Kết quả sẽ cập nhật ngay tại khung này.
                   </p>
                 </div>
               </div>
             ) : (
-              /* Detailed Prediction Result Block */
-              <div 
-                ref={resultRef}
-                className="animate-result-in rounded-2xl border border-slate-200 bg-white shadow-md p-5 sm:p-6 space-y-6"
-                style={{ scrollMarginTop: '80px' }}
-              >
-                {/* Result Title Header & Download Action */}
-                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-4">
-                  <div>
-                    <span className="text-xs font-bold uppercase tracking-wider text-teal-700 font-mono">
-                      KẾT QUẢ DỰ ĐOÁN GẦN NHẤT
-                    </span>
-                    <h2 className="text-xl font-extrabold text-slate-900 mt-0.5">
-                      Bảng phân tích trạng thái thiết bị
-                    </h2>
-                  </div>
+              <PredictionPanel key={manualReport?.id} result={result} stale={stale} failed={Boolean(errorMsg)} hideTruth={testEdited}
+                baseline={baseline} onKeep={() => setBaseline(result)} onClear={() => setBaseline(null)}
+                onReport={() => manualReport && onReport(manualReport)} onExport={() => handleDownloadSummary(result)} />
 
-                  <div className="flex flex-wrap gap-2">
-                    {manualReport && <button type="button" className="app-button" onClick={() => onReport(manualReport)}>Xem báo cáo</button>}
-                    <button type="button" className="app-button" onClick={() => handleDownloadSummary(result)}>
-                      <Download className="w-3.5 h-3.5" aria-hidden="true" />
-                      Tải tóm tắt JSON
-                    </button>
-                  </div>
-                </div>
-
-                {result.out_of_range_warnings.length > 0 && <p role="status" className="text-amber-800">Kết quả tham khảo. Kết quả ngoài phạm vi Train không đủ cơ sở kết luận.</p>}
-                {result.test_comparison && !testEdited && <section className="method-panel" aria-label="Đối chiếu nhãn Test">
-                  <h3>Đối chiếu mẫu Test UDI {result.test_comparison.id}</h3>
-                  <p>Nhãn thật {result.test_comparison.label ? 'Có hỏng' : 'Bình thường'} · Dự đoán {result.status_label}</p>
-                  <p>{result.test_comparison.outcome} · {({ TP: 'Nhận đúng mẫu hỏng', TN: 'Nhận đúng mẫu bình thường', FP: 'Báo nhầm mẫu bình thường', FN: 'Bỏ sót mẫu hỏng' })[result.test_comparison.outcome]}</p>
-                </section>}
-                <dl className="watt-kpis">
-                  <div>
-                    <dt>Điểm mô hình</dt>
-                    <dd className="watt-metric">{result.model_score_percent}%</dd>
-                  </div>
-                  <div>
-                    <dt>Ngưỡng quyết định</dt>
-                    <dd className="watt-metric">{result.display_threshold_percent}%</dd>
-                  </div>
-                  <div className={result.is_failure ? 'watt-alert' : 'watt-normal'}>
-                    <dt>Trạng thái</dt>
-                    <dd>Dự đoán: {result.status_label}</dd>
-                  </div>
-                </dl>
-
-                {/* 2. Score Scale Bar with Threshold Marker */}
-                <ThresholdBar
-                  score={result.model_score}
-                  scorePercent={result.model_score_percent}
-                  exactThreshold={result.exact_threshold}
-                  displayThresholdPercent={result.display_threshold_percent}
-                  isFailure={result.is_failure}
-                />
-
-                {result.out_of_range_warnings.length > 0 && (
-                  <p className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm font-semibold text-amber-900">
-                    {result.out_of_range_warnings.length} thông số ngoài dải huấn luyện. Hãy kiểm tra đầu vào trước khi diễn giải kết quả.
-                  </p>
-                )}
-                <button type="button" onClick={() => setBaseline(result)} disabled={baseline === result}
-                  className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-sm font-semibold text-teal-800 hover:bg-white disabled:opacity-60">
-                  {baseline && baseline !== result ? 'Giữ kết quả mới làm mốc' : 'Giữ kết quả này'}
-                </button>
-                {baseline && <PredictionComparison baseline={baseline} current={result} onClear={() => setBaseline(null)} />}
-
-                <div className="watt-analysis-grid">
-                  <ShapWaterfall contributions={result.top_contributions} />
-                  <InspectionSuggestions suggestions={result.suggestions} isFailure={result.is_failure} />
-                </div>
-
-                {/* 3. 3D Machine Viewer with Status Tower Light */}
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between px-1">
-                    <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                      Đèn trạng thái thiết bị 3D
-                    </span>
-                    <span className={`text-xs font-bold px-2 py-0.5 rounded border ${
-                      result.is_failure 
-                        ? 'bg-red-100 text-red-800 border-red-300' 
-                        : 'bg-emerald-100 text-emerald-800 border-emerald-300'
-                    }`}>
-                      {result.is_failure ? 'Đèn đỏ trên nóc' : 'Đèn xanh trên nóc'}
-                    </span>
-                  </div>
-                  <Machine3DViewer 
-                    status={result.is_failure ? 'failure' : 'normal'} 
-                    interactive={true} 
-                    height="h-64 sm:h-72" 
-                    caption="Mô hình thiết bị minh họa"
-                  />
-                </div>
-
-                <RangeBar
-                  rangeChecks={result.range_checks}
-                  outOfRangeWarnings={result.out_of_range_warnings}
-                />
-              </div>
             )}
           </div>
         </div>
@@ -631,6 +548,7 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
               <div className="flex flex-col sm:flex-row items-center gap-3">
                 <input
                   type="file"
+                  disabled={csvLoading}
                   aria-label="Chọn tệp CSV"
                   aria-invalid={Boolean(csvError)}
                   aria-describedby={csvError ? 'csv-error' : undefined}
@@ -671,10 +589,11 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
           </div>
 
           {/* Batch CSV Results Table & Row Details */}
+          {csvBatch && csvFile !== batchFile && <p role="status" className="result-notice">Tệp đã thay đổi. Kết quả bên dưới thuộc tệp {batchFile?.name}. Chạy dự đoán CSV để cập nhật.</p>}
           {csvBatch && (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
               {/* CSV Summary & Table (Left Column: 7 cols) */}
-              <div className="min-w-0 lg:col-span-7 p-5 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-4">
+              <div className="min-w-0 lg:col-span-8 p-5 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-4">
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3">
                   {/* Summary Badges */}
                   <div className="flex flex-wrap items-center gap-2">
@@ -796,78 +715,18 @@ export const PredictPage: React.FC<Props> = ({ sample, onRecord, onReport }) => 
               </div>
 
               {/* Selected Row Detail (Right Column: 5 cols) */}
-              <div className="min-w-0 lg:col-span-5">
+              <div className="min-w-0 lg:col-span-4">
                 {csvDetailStatus && (
                   <p role={csvDetailStatus === 'error' ? 'alert' : 'status'} className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
                     {csvDetailStatus === 'loading' ? `Đang tải chi tiết dòng #${selectedCsvRow}…` : `Không tải được dòng #${selectedCsvRow}. Hãy chọn lại dòng để thử lại.`}
                   </p>
                 )}
+                {csvDetail && <h2 className="mb-3 font-semibold">Chi tiết dòng #{selectedCsvRow}</h2>}
                 {csvDetail && (
-                  <div 
-                    ref={resultRef}
-                    className="p-5 rounded-2xl border border-slate-200 bg-white shadow-md space-y-5"
-                    style={{ scrollMarginTop: '80px' }}
-                  >
-                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-2">
-                      <span className="text-xs font-bold text-teal-800 uppercase">
-                        Chi tiết dòng #{selectedCsvRow}
-                      </span>
-                      <div className="flex flex-wrap gap-2">
-                        {csvReport && (
-                          <button type="button" className="app-button" onClick={() => onReport({
-                            ...csvReport,
-                            ...manualSummary(csvDetail),
-                            mode: 'csv',
-                            sampleName: `${csvReport.sampleName} · Dòng ${selectedCsvRow}`,
-                          })}>Xem báo cáo dòng</button>
-                        )}
-                        <button type="button" className="app-button" onClick={() => handleDownloadSummary(csvDetail)}>
-                          <Download className="w-3.5 h-3.5" aria-hidden="true" /> Tải tóm tắt JSON
-                        </button>
-                      </div>
-                    </div>
+                  <PredictionPanel key={selectedCsvRow} result={csvDetail}
+                    onExport={() => handleDownloadSummary(csvDetail)}
+                    onReport={() => csvReport && onReport({ ...csvReport, ...manualSummary(csvDetail), mode: 'csv', sampleName: csvReport.sampleName + ' · Dòng ' + selectedCsvRow })} />
 
-                    {csvDetail.out_of_range_warnings.length > 0 && <p role="status" className="text-amber-800">Kết quả tham khảo. Kết quả ngoài phạm vi Train không đủ cơ sở kết luận.</p>}
-                    {/* Prediction Label */}
-                    <div className={`p-3.5 rounded-xl border ${
-                      csvDetail.is_failure ? 'bg-red-50 border-red-300 text-red-900' : 'bg-emerald-50 border-emerald-300 text-emerald-900'
-                    }`}>
-                      <div className="text-xs text-slate-600 font-medium">Kết luận dự đoán:</div>
-                      <div className="text-lg font-extrabold flex items-center gap-2 mt-0.5">
-                        {csvDetail.is_failure ? (
-                          <>
-                            <AlertTriangle className="w-5 h-5 text-red-600" />
-                            <span>Dự đoán: Cảnh báo hỏng</span>
-                          </>
-                        ) : (
-                          <>
-                            <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-                            <span>Dự đoán: Bình thường</span>
-                          </>
-                        )}
-                      </div>
-                      <div className="text-xs font-mono mt-1 text-slate-700">
-                        Điểm mô hình: <strong>{csvDetail.model_score_percent}%</strong> (Ngưỡng: {csvDetail.display_threshold_percent}%)
-                      </div>
-                    </div>
-
-                    {/* Machine 3D */}
-                    <Machine3DViewer 
-                      status={csvDetail.is_failure ? 'failure' : 'normal'} 
-                      interactive={true} 
-                      height="h-56" 
-                      caption="Mô hình thiết bị minh họa"
-                    />
-
-                    {/* Top 3 TreeSHAP */}
-                    <ShapWaterfall contributions={csvDetail.top_contributions} />
-
-                    {/* Range Check */}
-                    <RangeBar rangeChecks={csvDetail.range_checks} outOfRangeWarnings={csvDetail.out_of_range_warnings} />
-
-                    {/* Suggestions */}
-                    <InspectionSuggestions suggestions={csvDetail.suggestions} isFailure={csvDetail.is_failure} />
-                  </div>
                 )}
               </div>
             </div>

@@ -1,17 +1,10 @@
-import { useState } from 'react';
 import type { ConfigurationItem } from '../types';
 
 export function TrainValidationChart({ configurations }: { configurations: ConfigurationItem[] }) {
-  const [model, setModel] = useState('all');
-  const [method, setMethod] = useState('all');
-  const rows = configurations.filter(c => (model === 'all' || c.model === model) && (method === 'all' || c.method === method));
+  const rows = configurations;
   return <section className="method-panel space-y-4">
     <h2>Train AP và Validation AP</h2>
     <p>Train AP là trung bình trên các phần huấn luyện CV. Biểu đồ tính chênh lệch Train AP − Validation AP. Cột Gap của tệp gốc là Train AP − CV AP.</p>
-    <div className="flex flex-wrap gap-3">
-      <label>Họ mô hình <select aria-label="Họ mô hình" value={model} onChange={e => setModel(e.target.value)}><option value="all">Tất cả</option>{[...new Set(configurations.map(c => c.model))].map(x => <option key={x}>{x}</option>)}</select></label>
-      <label>Chiến lược <select aria-label="Chiến lược biểu đồ" value={method} onChange={e => setMethod(e.target.value)}><option value="all">Tất cả</option>{[...new Set(configurations.map(c => c.method))].map(x => <option key={x}>{x}</option>)}</select></label>
-    </div>
     <p>● Train AP　◆ Validation AP · Thang 0–1</p>
     <div className="ap-chart">
       {rows.map(c => {
